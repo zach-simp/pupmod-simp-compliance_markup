@@ -1,0 +1,41 @@
+{
+  "name":    "onyxpoint-compliance_markup",
+  "version": "0.1.0",
+  "author":  "Trevor Vaughan",
+  "summary": "Additions to enable compliance annotations in Puppet code",
+  "license": "Apache 2.0",
+  "source":  "https://github.com/onyxpoint/compliance_markup",
+  "project_page": "https://github.com/onyxpoint/compliance_markup",
+  "issues_url":   "https://github.com/onyxpoint/compliance_markup/issues",
+  "tags": [ "simp" ],
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 4.1.0"
+    },
+    {
+      "name": "simp-iptables",
+      "version_requirement": ">= 4.1.0"
+    },
+    {
+      "name": "simp-simplib",
+      "version_requirement": ">= 1.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    }
+  ]
+}
