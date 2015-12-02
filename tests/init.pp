@@ -9,4 +9,24 @@
 # Learn more about module testing here:
 # http://docs.puppetlabs.com/guides/tests_smoke.html
 #
-include ::compliance_markup
+class test (
+  $var_one = '1',
+  $var_two = '2'
+) {
+  compliance_map()
+
+  compliance_map('pci','CCE-1234',"Don't do things because stuff")
+
+  compliance_map('pci','CCE-0000',"thingy")
+}
+
+class test2 {
+  compliance_map('pci','CCE-1235',"Don't do things because other stuff")
+
+  compliance_map('XXX','CCE-1111')
+}
+
+$compliance_profile = 'pci'
+
+include 'test'
+include 'test2'
