@@ -69,12 +69,16 @@ require 'pry'
         raise Puppet::ParseError, "compliance_map(): First parameter must be a compliance profile String"
       end
 
+      if custom_compliance_profile && !custom_compliance_identifier
+        raise Puppet::ParseError, "compliance_map(): You must pass at least two parameters"
+      end
+
       unless custom_compliance_identifier.is_a?(String)
         raise Puppet::ParseError, "compliance_map(): Second parameter must be a compliance identifier String"
       end
 
       if custom_compliance_notes
-        unless custom_compliance_identifier.is_a?(String)
+        unless custom_compliance_notes.is_a?(String)
           raise Puppet::ParseError, "compliance_map(): Third parameter must be a compliance notes String"
         end
       end
@@ -215,9 +219,9 @@ require 'pry'
         compliance_resource.set_parameter('group',Process.gid)
         compliance_resource.set_parameter('mode','0600')
       end
-  
+
       compliance_resource.set_parameter('content',%(#{@compliance_map.to_yaml}\n))
-      
+
       # Inject new information into the catalog
       catalog.add_resource(compliance_resource)
 
