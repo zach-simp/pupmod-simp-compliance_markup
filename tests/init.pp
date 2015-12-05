@@ -26,7 +26,7 @@ class test2 {
   compliance_map('XXX','CCE-1111')
 }
 
-$compliance_profile = 'pci'
+$compliance_profile = ['pci','XXX']
 
 include 'test'
 include 'test2'
