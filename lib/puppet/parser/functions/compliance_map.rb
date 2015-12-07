@@ -27,13 +27,17 @@ module Puppet::Parser::Functions
       parameter mapping. This is useful if you have more advanced logic that is
       required to meet a particular internal requirement.
 
+      NOTE: The parser does not know what line number and, possibly, what file
+      the function is being called from based on the version of the Puppet
+      parser being used.
+
       The following optional parameters may be used to add your own compliance
       data:
 
         :compliance_profile => 'A String, or Array, that denotes the compliance
                                 profile(s) to which you are mapping.'
-        :identifier         => 'A unique identifier String for the policy to
-                                which you are mapping.'
+        :identifier         => 'A unique identifier String or Array for the
+                                policy to which you are mapping.'
         :notes              => 'An *optional* String that allows for arbitrary
                                 notes to include in the compliance report'
 
@@ -127,7 +131,7 @@ module Puppet::Parser::Functions
 
       class_params.each do |param|
         _compliance_namespace = %(compliance::#{compliance_profile}::#{name}::#{param})
-  
+
         # Allow for ENC Settings
         _found_param = lookup_global_silent(_compliance_namespace)
         unless _found_param
@@ -139,7 +143,7 @@ module Puppet::Parser::Functions
             _found_param = function_hiera([_compliance_namespace,hiera_unknown])
           end
         end
-  
+
         _current_param = @resource.parameters[param].value
 
         unless _found_param == hiera_unknown
@@ -147,11 +151,11 @@ module Puppet::Parser::Functions
           # non-string values is not useful.
           if _found_param['value'].to_s != _current_param.to_s
             difference_params[param] = {
-              'identifier'    => _found_param['identifier'],
+              'identifier'      => _found_param['identifier'],
               'compliant_param' => _found_param['value'],
               'system_param'    => _current_param
             }
-  
+
             # If we have other parameters (notes, custom entries, etc...) drag
             # them into the stack as they are.
             (_found_param.keys - ['identifier','value']).each do |extra_param|
@@ -165,64 +169,64 @@ module Puppet::Parser::Functions
       unless @compliance_map
         @compliance_map = { 'version' => report_api_version }
       end
-  
+
       unless @compliance_map['compliance_profiles']
         @compliance_map['compliance_profiles'] = {}
       end
-  
+
       if compliance_profile && !difference_params.empty?
         unless @compliance_map['compliance_profiles'][compliance_profile]
           @compliance_map['compliance_profiles'][compliance_profile] = {}
         end
-  
+
         unless @compliance_map['compliance_profiles'][compliance_profile][resource_name]
           @compliance_map['compliance_profiles'][compliance_profile][resource_name] = {}
         end
       end
-  
+
       include_custom_compliance_profile = (custom_compliance_profile && compliance_profiles.include?(custom_compliance_profile))
 
       if include_custom_compliance_profile
         unless @compliance_map['compliance_profiles'][custom_compliance_profile]
           @compliance_map['compliance_profiles'][custom_compliance_profile] = {}
         end
-  
+
         unless @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name]
           @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name] = {}
         end
       end
-  
+
       generate_report = false
       # Perform the parameter mapping
       unless difference_params.empty?
         unless @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters']
           @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters'] = []
         end
-  
+
         difference_params.keys.each do |param|
           @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters'] |= [difference_params[param]]
         end
-  
+
         generate_report = true
       end
-  
+
       # Add in custom materials if they exist
       if include_custom_compliance_profile
         unless @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name]['custom_entries']
           @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name]['custom_entries'] = []
         end
-  
+
         _data_hash = {
           'location' => %(#{file}:#{line}),
           'identifier' => custom_compliance_identifier
         }
-  
+
         if custom_compliance_notes
           _data_hash['notes'] = custom_compliance_notes
         end
-  
+
         @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name]['custom_entries'] |= [_data_hash]
-  
+
         generate_report = true
       end
     end

@@ -1,14 +1,12 @@
 Summary: Additions to enable compliance annotations in Puppet code
-Name: pupmod-compliance_markup
+Name: pupmod-onyxpoint-compliance_markup
 Version: 0.1.0
 Release: 0
 License: Apache 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Requires: pupmod-iptables >= 2.0.0-0
-Requires: pupmod-simplib  >= 1.0.0-0
-Requires: puppet >= 3.3.0
+Requires: puppet >= 3.8.0
 Buildarch: noarch
 
 Prefix: %{_sysconfdir}/puppet/environments/simp/modules

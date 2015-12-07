@@ -1,6 +1,5 @@
 ---
 :backends:
-  - "rspec"
   - "yaml"
 :yaml:
   :datadir: '/home/username/pupmod-compliance/tests/hieradata'

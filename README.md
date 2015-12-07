@@ -23,79 +23,144 @@ Hiera or at the global scope. Users may also provide custom inline policy
 documentation and mapping documentation.
 
 The goal of this module is to make it easier for users to both detect, and
-report on, deviations from a given policy inside the Puppet codebase itself.
+report on, deviations from a given policy inside their Puppet codebase.
 
 ## Module Description
 
-**FIXME:** The text below is boilerplate copy.  Ensure that it is correct and remove this message!
-
-If applicable, this section should have a brief description of the technology the module integrates with and what that integration enables. This section should answer the questions: "What does this module *do*?" and "Why would I use it?"
-
-If your module has a range of functionality (installation, configuration, management, etc.) this is the time to mention it.
+This module provides the function `compliance_map()` and does not provide any
+manifest code.
 
 ## Setup
 
 ### What compliance_markup affects
 
-**FIXME:** The text below is boilerplate copy.  Ensure that it is correct and remove this message!
-
-* A list of files, packages, services, or operations that the module will alter, impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
-
-### Setup Requirements **OPTIONAL**
-
-**FIXME:** The text below is boilerplate copy.  Ensure that it is correct and remove this message!
-
-If your module requires anything extra before setting up (pluginsync enabled, etc.), mention it here.
-
-### Beginning with compliance_markup
-
-The very basic steps needed for a user to get the module up and running.
-
-If your most recent release breaks compatibility or requires particular steps for upgrading, you may wish to include an additional section here: Upgrading (For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+Presently, the `compliance_map()` function will create a File resource
+targeting `Puppet[:vardir]/compliance_report.yaml`. It may, in the future,
+create a file on the server and/or upload materials directly to PuppetDB.
 
 ## Usage
 
-**FIXME:** The text below is boilerplate copy.  Ensure that it is correct and remove this message!
+This function provides a mechanism for mapping compliance data to settings in
+Puppet.
 
-Put the classes, types, and resources for customizing, configuring, and doing the fancy stuff with your module here.
+It is primarily designed for use in classes to validate that parameters are
+properly set.
+
+When called, the parameters in the calling class will be evaluated against top
+level parameters or Hiera data, in that order.
+
+The variable space against which the class parameters will be evaluated must be
+structured as the following hash:
+
+```
+  compliance::<compliance_profile>::<class_name>::<parameter> :
+    'identifier' : 'ID String'
+    'value'      : 'Compliant Value'
+```
+
+For instance, if you were mapping to NIST 800-53 in the SSH class, you could
+use something like the following in Hiera:
+
+```
+  compliance::nist_800_53::ssh::permit_root_login :
+    'identifier' : 'CCE-1234'
+    'value'      : false
+```
+
+Alternatively, you may add compliance data to your modules outside of a
+parameter mapping. This is useful if you have more advanced logic that is
+required to meet a particular internal requirement.
+
+**NOTE:** The parser does not know what line number and, possibly, what file
+the function is being called from based on the version of the Puppet parser
+being used.
+
+The following optional parameters may be used to add your own compliance data:
+
+```ruby
+:compliance_profile => 'A String, or Array, that denotes the compliance
+                        profile(s) to which you are mapping.'
+:identifier         => 'A unique identifier String for the policy to which you
+                        are mapping.'
+:notes              => 'An *optional* String that allows for arbitrary notes to
+                        include in the compliance report'
+```
 
 ## Reference
 
-**FIXME:** The text below is boilerplate copy.  Ensure that it is correct and remove this message!
+### Example 1 - Standard Usage
 
-Here, list the classes, types, providers, facts, etc contained in your module. This section should include all of the under-the-hood workings of your module so people know what the module is touching on their system but don't need to mess with things. (We are working on automating this message!)
+**Manifest**
+
+```ruby
+class foo (
+  $var_one => 'one',
+  $var_two => 'two'
+) {
+  # This will validate all parameters
+  compliance_map()
+}
+
+$compliance_profile = 'my_policy'
+
+include 'foo'
+```
+
+**Hiera.yaml**
+
+```yaml
+:backends:
+  - 'yaml'
+:yaml:
+  :datadir: '/path/to/your/hieradata'
+:hierarchy:
+  "compliance_profiles/%{compliance_profile}"
+  "global"
+```
+
+**Hieradata**
+
+```yaml
+---
+# In file /path/to/your/hieradata/compliance_profiles/my_policy.yaml
+compliance::my_policy::foo::var_one :
+  'identifier' : 'CCE-1234'
+  'value' : 'not one'
+```
+
+### Example 2 - Custom Compliance Map
+
+```ruby
+if $::circumstance {
+  compliance_map('nist_800_53','CCE-1234','Note about this section')
+  ...code that applies CCE-1234...
+}
+```
 
 ## Limitations
 
-**FIXME:** The text below is boilerplate copy.  Ensure that it is correct and remove this message!
-
-SIMP Puppet modules are generally intended to be used on a Redhat Enterprise Linux-compatible distribution such as EL6 and EL7.
+Depending on the version of Puppet being used, the `compliance_map()` function
+may not be able to precisely determine where the function has been called and a
+best guess may be provided.
 
 ## Development
 
-Please see the [SIMP Contribution Guidelines](https://simp-project.atlassian.net/wiki/display/SD/Contributing+to+SIMP).
-
+Patches are welcome to the code on the [Onyx Point Github](https://github.com/onyxpoint) account. If you provide code, you are
+guaranteeing that you own the rights for the code or you have been given rights
+to contribute the code.
 
 ### Acceptance tests
 
-To run the system tests, you need [Vagrant](https://www.vagrantup.com/) installed. Then, run:
+To run the tests for this module perform the following actions after installing
+`bundler`:
 
 ```shell
+bundle update
 bundle exec rake acceptance
 ```
 
-Some environment variables may be useful:
+## Packaging
 
-```shell
-BEAKER_debug=true
-BEAKER_provision=no
-BEAKER_destroy=no
-BEAKER_use_fixtures_dir_for_modules=yes
-```
-
-* `BEAKER_debug`: show the commands being run on the STU and their output.
-* `BEAKER_destroy=no`: prevent the machine destruction after the tests finish so you can inspect the state.
-* `BEAKER_provision=no`: prevent the machine from being recreated. This can save a lot of time while you're writing the tests.
-* `BEAKER_use_fixtures_dir_for_modules=yes`: cause all module dependencies to be loaded from the `spec/fixtures/modules` directory, based on the contents of `.fixtures.yml`.  The contents of this directory are usually populated by `bundle exec rake spec_prep`.  This can be used to run acceptance tests to run on isolated networks.
+Running `rake pkg:rpm[...]` will develop an RPM that is designed to be
+integrated into a [SIMP](https://github.com/simp) environment. This module is
+not restricted to, or dependent on, the SIMP environment in any way.
