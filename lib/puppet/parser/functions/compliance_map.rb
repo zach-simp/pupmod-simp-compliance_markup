@@ -30,7 +30,7 @@ module Puppet::Parser::Functions
       The following optional parameters may be used to add your own compliance
       data:
 
-        :compliance_profile => 'A String, or Array, that denotes the complince
+        :compliance_profile => 'A String, or Array, that denotes the compliance
                                 profile(s) to which you are mapping.'
         :identifier         => 'A unique identifier String for the policy to
                                 which you are mapping.'
@@ -89,12 +89,27 @@ module Puppet::Parser::Functions
 
     # Obtain the file position
     file = @source.file
-    line = @source.line
+    # We may not know the line number if this is at Top Scope
+    line = @source.line || '<unknown>'
     name = @source.name
 
-    unless file
-      # We can't figure out where we are at the top level.
-      raise Puppet::ParseError, "compliance_map() cannot be used at top scope"
+    # If we don't know the filename, guess....
+    # This is probably because we're running in Puppet 4
+    if is_topscope?
+      if environment.manifest =~ /\.pp$/
+        file = environment.manifest
+      els
+        file = File.join(environment.manifest,'site.pp')
+      end
+    else
+      filename = name.split('::')
+      filename[-1] = filename[-1] + '.pp'
+
+      file = File.join(
+               '<estimate>',
+               "#{environment.modulepath.first}",
+               filename
+      )
     end
 
     resource_name = %(#{@resource.type}::#{@resource.title})
@@ -117,11 +132,16 @@ module Puppet::Parser::Functions
         _found_param = lookup_global_silent(_compliance_namespace)
         unless _found_param
           # If not using an ENC, look in Hiera
-          _found_param = function_hiera([_compliance_namespace,hiera_unknown])
+          # Puppet 4 compat
+          if self.respond_to?(:call_function)
+            _found_param = call_function('hiera',[_compliance_namespace,hiera_unknown])
+          else
+            _found_param = function_hiera([_compliance_namespace,hiera_unknown])
+          end
         end
   
         _current_param = @resource.parameters[param].value
-  
+
         unless _found_param == hiera_unknown
           # Compare the string version of the values, reporting differences in
           # non-string values is not useful.
@@ -140,7 +160,7 @@ module Puppet::Parser::Functions
           end
         end
       end
-  
+
       # Create the validation report
       unless @compliance_map
         @compliance_map = { 'version' => report_api_version }
@@ -206,21 +226,21 @@ module Puppet::Parser::Functions
         generate_report = true
       end
     end
-  
+
     if generate_report
       compliance_report_target = %(#{Puppet[:vardir]}/compliance_report.yaml)
 
-      # Retrieve the catalog resource if it already exists, create one if it does
-      # not
+      # Retrieve the catalog resource if it already exists, create one if it
+      # does not
       compliance_resource = catalog.resources.find{ |res|
         res.type == 'File' && res.name == compliance_report_target
       }
 
       if compliance_resource
-        # This is a massive hack that should be removed in the future.
-        # Some version of Puppet, including the latest 3.X, do not check to see
-        # if a resource has the 'remove' capabiltity defined before calling it.
-        # We patch in the method here just to work around this issue.
+        # This is a massive hack that should be removed in the future.  Some
+        # versions of Puppet, including the latest 3.X, do not check to see if
+        # a resource has the 'remove' capability defined before calling it.  We
+        # patch in the method here to work around this issue.
         unless compliance_resource.respond_to?(:remove)
           compliance_resource.define_singleton_method(:remove) do
             # Nothing to do

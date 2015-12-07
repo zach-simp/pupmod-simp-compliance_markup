@@ -1,4 +1,4 @@
-[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/simp/pupmod-simp-compliance_markup.svg)](https://travis-ci.org/simp/pupmod-simp-compliance_markup) [![SIMP compatibility](https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg)](https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg)
+[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/simp/pupmod-simp-compliance_markup.svg)](https://travis-ci.org/simp/pupmod-simp-compliance_markup)
 
 #### Table of Contents
 
@@ -16,23 +16,14 @@
 
 ## Overview
 
-**FIXME:** The text below is boilerplate copy.  Ensure that it is correct and remove this message!
+This module adds a function `compliance_map()` to the Puppet language. The
+`compliance_map()` function provides the ability for users to compare their
+in-scope class parameters against a set of *compliant* parameters, either in
+Hiera or at the global scope. Users may also provide custom inline policy
+documentation and mapping documentation.
 
-A one-maybe-two sentence summary of what the module does/what problem it solves. This is your 30 second elevator pitch for your module. Consider including OS/Puppet version it works with.
-
-## This is a SIMP module
-This module is a component of the [System Integrity Management Platform](https://github.com/NationalSecurityAgency/SIMP), a compliance-management framework built on Puppet.
-
-If you find any issues, they can be submitted to our [JIRA](https://simp-project.atlassian.net/).
-
-Please read our [Contribution Guide](https://simp-project.atlassian.net/wiki/display/SD/Contributing+to+SIMP) and visit our [developer wiki](https://simp-project.atlassian.net/wiki/display/SD/SIMP+Development+Home).
-
-_**FIXME: verify that the following paragraph fits this module's characteristics!**_
-
-This module is optimally designed for use within a larger SIMP ecosystem, but it can be used independently:
-* When included within the SIMP ecosystem, security compliance settings will be managed from the Puppet server.
-* If used independently, all SIMP-managed security subsystems are disabled by default and must be explicitly opted into by administrators.  Please review the `client_nets` and `$enable_*` parameters in `manifests/init.pp` for details.
-
+The goal of this module is to make it easier for users to both detect, and
+report on, deviations from a given policy inside the Puppet codebase itself.
 
 ## Module Description
 

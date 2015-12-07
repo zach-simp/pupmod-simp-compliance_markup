@@ -28,5 +28,9 @@ class test2 {
 
 $compliance_profile = ['pci','XXX']
 
-include 'test'
-include 'test2'
+compliance_map()
+
+compliance_map('pci','CCE-1234',"Don't do things because stuff")
+
+#include 'test'
+#include 'test2'

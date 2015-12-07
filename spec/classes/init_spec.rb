@@ -8,7 +8,7 @@ describe 'compliance' do
   after(:each) do
     if File.directory?(@tmpdir)
       Dir.glob("#{@tmpdir}/*").each do |todel|
-        FileUtills.rm_rf(todel)
+        FileUtils.rm_rf(todel)
       end
     end
   end
@@ -126,6 +126,26 @@ describe 'compliance' do
           end
 
           it_behaves_like "a deviation run", compliance_profile, 'Class::Compliance::Test6', true, ['not standard']
+        end
+
+        context 'the function should work when called from a define' do
+          compliance_profile = 'standard'
+          def_name = 'test'
+
+          let(:pre_condition) do
+           %(
+            $compliance_profile = [#{compliance_profile}, 'not standard']
+
+            compliance::test7 { #{def_name}:
+              # Put a non-compliant value here
+              var_one => 'one'
+            }
+            )
+          end
+
+          # Note the difference in the 'test_run' parameter here, it is not a
+          # class.
+          it_behaves_like "a deviation run", compliance_profile, "Compliance::Test7::#{def_name}", true, ['not standard']
         end
       end
     end
