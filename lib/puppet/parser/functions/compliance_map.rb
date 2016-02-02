@@ -144,16 +144,16 @@ module Puppet::Parser::Functions
           end
         end
 
-        _current_param = @resource.parameters[param].value
+        _current_value = @resource.parameters[param].value
 
         unless _found_param == hiera_unknown
           # Compare the string version of the values, reporting differences in
           # non-string values is not useful.
-          if _found_param['value'].to_s != _current_param.to_s
-            difference_params[param] = {
+          if _found_param['value'].to_s != _current_value.to_s
+            difference_params[param.to_s] = {
               'identifier'      => _found_param['identifier'],
-              'compliant_param' => _found_param['value'],
-              'system_param'    => _current_param
+              'compliant_value' => _found_param['value'],
+              'system_value'    => _current_value
             }
 
             # If we have other parameters (notes, custom entries, etc...) drag
@@ -200,11 +200,11 @@ module Puppet::Parser::Functions
       # Perform the parameter mapping
       unless difference_params.empty?
         unless @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters']
-          @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters'] = []
+          @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters'] = {}
         end
 
         difference_params.keys.each do |param|
-          @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters'] |= [difference_params[param]]
+          @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters'][param] = difference_params[param]
         end
 
         generate_report = true
