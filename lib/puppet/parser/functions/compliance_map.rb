@@ -102,7 +102,7 @@ module Puppet::Parser::Functions
     if is_topscope?
       if environment.manifest =~ /\.pp$/
         file = environment.manifest
-      els
+      else
         file = File.join(environment.manifest,'site.pp')
       end
     else
@@ -110,9 +110,9 @@ module Puppet::Parser::Functions
       filename[-1] = filename[-1] + '.pp'
 
       file = File.join(
-               '<estimate>',
-               "#{environment.modulepath.first}",
-               filename
+        '<estimate>',
+        "#{environment.modulepath.first}",
+        filename
       )
     end
 
@@ -130,7 +130,8 @@ module Puppet::Parser::Functions
     compliance_profiles.each do |compliance_profile|
 
       class_params.each do |param|
-        _compliance_namespace = %(compliance::#{compliance_profile}::#{name}::#{param})
+        _param = param.to_s
+        _compliance_namespace = %(compliance::#{compliance_profile}::#{name}::#{_param})
 
         # Allow for ENC Settings
         _found_param = lookup_global_silent(_compliance_namespace)
@@ -150,7 +151,7 @@ module Puppet::Parser::Functions
           # Compare the string version of the values, reporting differences in
           # non-string values is not useful.
           if _found_param['value'].to_s != _current_value.to_s
-            difference_params[param.to_s] = {
+            difference_params[_param] = {
               'identifier'      => _found_param['identifier'],
               'compliant_value' => _found_param['value'],
               'system_value'    => _current_value
@@ -159,7 +160,7 @@ module Puppet::Parser::Functions
             # If we have other parameters (notes, custom entries, etc...) drag
             # them into the stack as they are.
             (_found_param.keys - ['identifier','value']).each do |extra_param|
-              difference_params[param][extra_param] = _found_param[extra_param]
+              difference_params[_param][extra_param] = _found_param[extra_param]
             end
           end
         end
@@ -224,7 +225,6 @@ module Puppet::Parser::Functions
         if custom_compliance_notes
           _data_hash['notes'] = custom_compliance_notes
         end
-
         @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name]['custom_entries'] |= [_data_hash]
 
         generate_report = true
