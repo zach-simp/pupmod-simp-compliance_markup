@@ -54,15 +54,24 @@ module Puppet::Parser::Functions
       find_global_scope.to_hash[param]
     end
 
+    # Set the API version for our report in case we change the format in the
+    # future.
+    report_api_version = '0.0.1'
+
     # Pick up our compiler hitchhiker
     hitchhiker = @compiler.instance_variable_get(:@compliance_map_function_data)
     if hitchhiker
       @compliance_map = hitchhiker
-    end
+    else
+      # Create the validation report
+      unless @compliance_map
+        @compliance_map = { 'version' => report_api_version }
+      end
 
-    # Set the API version for our report in case we change the format in the
-    # future.
-    report_api_version = '0.0.1'
+      unless @compliance_map['compliance_profiles']
+        @compliance_map['compliance_profiles'] = {}
+      end
+    end
 
     # What profile are we using?
     if args && !args.empty?
@@ -166,15 +175,6 @@ module Puppet::Parser::Functions
         end
       end
 
-      # Create the validation report
-      unless @compliance_map
-        @compliance_map = { 'version' => report_api_version }
-      end
-
-      unless @compliance_map['compliance_profiles']
-        @compliance_map['compliance_profiles'] = {}
-      end
-
       if compliance_profile && !difference_params.empty?
         unless @compliance_map['compliance_profiles'][compliance_profile]
           @compliance_map['compliance_profiles'][compliance_profile] = {}
@@ -231,7 +231,8 @@ module Puppet::Parser::Functions
       end
     end
 
-    if generate_report
+    # This will be useful for a future iteration of the software.
+    #if generate_report
       compliance_report_target = %(#{Puppet[:vardir]}/compliance_report.yaml)
 
       # Retrieve the catalog resource if it already exists, create one if it
@@ -272,6 +273,6 @@ module Puppet::Parser::Functions
       # This gets a little hairy, we need to persist the compliance map across
       # the entire compilation so we hitch a ride on the compiler.
       @compiler.instance_variable_set(:@compliance_map_function_data, @compliance_map)
-    end
+    #end
   end
 end
