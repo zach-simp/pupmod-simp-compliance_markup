@@ -1,4 +1,147 @@
 module Puppet::Parser::Functions
+  module SIMP
+#### BEGIN COPIED CODE ####
+# This code portion is directly pulled from ActiveSupport and is licensed unter
+# the MIT License.
+#
+# This should be removed when we drop support for Ruby < 1.9
+#
+    unless defined?(OrderedHash)
+      # Hash is ordered in Ruby 1.9!
+      if RUBY_VERSION >= '1.9'
+        OrderedHash = ::Hash
+      else
+        class OrderedHash < Hash #:nodoc:
+          def initialize(*args, &block)
+            super
+            @keys = []
+          end
+    
+          def self.[](*args)
+            ordered_hash = new
+    
+            if (args.length == 1 && args.first.is_a?(Array))
+              args.first.each do |key_value_pair|
+                next unless (key_value_pair.is_a?(Array))
+                ordered_hash[key_value_pair[0]] = key_value_pair[1]
+              end
+    
+              return ordered_hash
+            end
+    
+            unless (args.size % 2 == 0)
+              raise ArgumentError.new("odd number of arguments for Hash")
+            end
+    
+            args.each_with_index do |val, ind|
+              next if (ind % 2 != 0)
+              ordered_hash[val] = args[ind + 1]
+            end
+    
+            ordered_hash
+          end
+    
+          def initialize_copy(other)
+            super
+            # make a deep copy of keys
+            @keys = other.keys
+          end
+    
+          def []=(key, value)
+            @keys << key if !has_key?(key)
+            super
+          end
+    
+          def delete(key)
+            if has_key? key
+              index = @keys.index(key)
+              @keys.delete_at index
+            end
+            super
+          end
+          
+          def delete_if
+            super
+            sync_keys!
+            self
+          end
+    
+          def reject!
+            super
+            sync_keys!
+            self
+          end
+    
+          def reject(&block)
+            dup.reject!(&block)
+          end
+    
+          def keys
+            @keys.dup
+          end
+    
+          def values
+            @keys.collect { |key| self[key] }
+          end
+    
+          def to_hash
+            self
+          end
+    
+          def to_a
+            @keys.map { |key| [ key, self[key] ] }
+          end
+    
+          def each_key
+            @keys.each { |key| yield key }
+          end
+    
+          def each_value
+            @keys.each { |key| yield self[key]}
+          end
+    
+          def each
+            @keys.each {|key| yield [key, self[key]]}
+          end
+    
+          alias_method :each_pair, :each
+    
+          def clear
+            super
+            @keys.clear
+            self
+          end
+    
+          def shift
+            k = @keys.first
+            v = delete(k)
+            [k, v]
+          end
+    
+          def merge!(other_hash)
+            other_hash.each {|k,v| self[k] = v }
+            self
+          end
+    
+          def merge(other_hash)
+            dup.merge!(other_hash)
+          end
+    
+          def inspect
+            "#<OrderedHash #{super}>"
+          end
+    
+        private
+    
+          def sync_keys!
+            @keys.delete_if {|k| !has_key?(k)}
+          end
+        end
+      end
+  #### END COPIED CODE ####
+    end
+  end
+
   newfunction(:compliance_map, :doc => <<-'ENDHEREDOC') do |args|
       This function provides a mechanism for mapping compliance data to
       settings in Puppet.
@@ -65,11 +208,12 @@ module Puppet::Parser::Functions
     else
       # Create the validation report
       unless @compliance_map
-        @compliance_map = { 'version' => report_api_version }
+        @compliance_map = Puppet::Parser::Functions::SIMP::OrderedHash.new
+        @compliance_map['version'] = report_api_version
       end
 
       unless @compliance_map['compliance_profiles']
-        @compliance_map['compliance_profiles'] = {}
+        @compliance_map['compliance_profiles'] = Puppet::Parser::Functions::SIMP::OrderedHash.new
       end
     end
 
@@ -160,11 +304,11 @@ module Puppet::Parser::Functions
           # Compare the string version of the values, reporting differences in
           # non-string values is not useful.
           if _found_param['value'].to_s != _current_value.to_s
-            difference_params[_param] = {
-              'identifier'      => _found_param['identifier'],
-              'compliant_value' => _found_param['value'],
-              'system_value'    => _current_value
-            }
+            difference_params[_param] = Puppet::Parser::Functions::SIMP::OrderedHash.new
+
+            difference_params[_param]['identifier'] = _found_param['identifier']
+            difference_params[_param]['compliant_value'] = _found_param['value']
+            difference_params[_param]['system_value'] = _current_value
 
             # If we have other parameters (notes, custom entries, etc...) drag
             # them into the stack as they are.
@@ -177,11 +321,11 @@ module Puppet::Parser::Functions
 
       if compliance_profile && !difference_params.empty?
         unless @compliance_map['compliance_profiles'][compliance_profile]
-          @compliance_map['compliance_profiles'][compliance_profile] = {}
+          @compliance_map['compliance_profiles'][compliance_profile] = Puppet::Parser::Functions::SIMP::OrderedHash.new
         end
 
         unless @compliance_map['compliance_profiles'][compliance_profile][resource_name]
-          @compliance_map['compliance_profiles'][compliance_profile][resource_name] = {}
+          @compliance_map['compliance_profiles'][compliance_profile][resource_name] = Puppet::Parser::Functions::SIMP::OrderedHash.new
         end
       end
 
@@ -189,11 +333,11 @@ module Puppet::Parser::Functions
 
       if include_custom_compliance_profile
         unless @compliance_map['compliance_profiles'][custom_compliance_profile]
-          @compliance_map['compliance_profiles'][custom_compliance_profile] = {}
+          @compliance_map['compliance_profiles'][custom_compliance_profile] = Puppet::Parser::Functions::SIMP::OrderedHash.new
         end
 
         unless @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name]
-          @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name] = {}
+          @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name] = Puppet::Parser::Functions::SIMP::OrderedHash.new
         end
       end
 
@@ -201,7 +345,7 @@ module Puppet::Parser::Functions
       # Perform the parameter mapping
       unless difference_params.empty?
         unless @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters']
-          @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters'] = {}
+          @compliance_map['compliance_profiles'][compliance_profile][resource_name]['parameters'] = Puppet::Parser::Functions::SIMP::OrderedHash.new
         end
 
         difference_params.keys.each do |param|
@@ -217,10 +361,10 @@ module Puppet::Parser::Functions
           @compliance_map['compliance_profiles'][custom_compliance_profile][resource_name]['custom_entries'] = []
         end
 
-        _data_hash = {
-          'location' => %(#{file}:#{line}),
-          'identifier' => custom_compliance_identifier
-        }
+        _data_hash = Puppet::Parser::Functions::SIMP::OrderedHash.new
+
+        _data_hash['location'] = %(#{file}:#{line})
+        _data_hash['identifier'] = custom_compliance_identifier
 
         if custom_compliance_notes
           _data_hash['notes'] = custom_compliance_notes
@@ -247,9 +391,10 @@ module Puppet::Parser::Functions
         # a resource has the 'remove' capability defined before calling it.  We
         # patch in the method here to work around this issue.
         unless compliance_resource.respond_to?(:remove)
-          compliance_resource.define_singleton_method(:remove) do
-            # Nothing to do
-          end
+          # Using this instead of define_singleton_method for Ruby 1.8 compatibility.
+          class << compliance_resource
+            self
+          end.send(:define_method, :remove) do nil end
         end
 
         catalog.remove_resource(compliance_resource)
