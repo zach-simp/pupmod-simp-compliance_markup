@@ -20,6 +20,7 @@ class test (
   compliance_map('pci','CCE-0000',"thingy")
 }
 
+# Second testing class
 class test2 {
   compliance_map('pci','CCE-1235',"Don't do things because other stuff")
 

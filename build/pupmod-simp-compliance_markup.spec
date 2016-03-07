@@ -1,6 +1,6 @@
 Summary: Additions to enable compliance annotations in Puppet code
-Name: pupmod-onyxpoint-compliance_markup
-Version: 0.1.0
+Name: pupmod-simp-compliance_markup
+Version: 1.0.0
 Release: 0
 License: Apache 2.0
 Group: Applications/System
@@ -45,5 +45,9 @@ mkdir -p %{buildroot}/%{prefix}/compliance_markup
 # Post uninstall stuff
 
 %changelog
+* Mon Mar 07 2016 Chris Tessmer <chris.tessmer@onyxpoint.com> - 1.0.0-0
+- Converted org from `onyxpoint` to `simp`.
+- Fixed linting problems.
+
 * Mon Nov 30 2015 Trevor Vaughan - 0.1.0-0
 - Initial package.

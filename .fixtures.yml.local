@@ -1,6 +1,4 @@
 ---
 fixtures:
   symlinks:
-    stdlib:   "../stdlib"
-    simplib:   "../simplib"
     compliance_markup: "#{source_dir}"

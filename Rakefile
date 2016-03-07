@@ -19,6 +19,7 @@ exclude_paths = [
   "dist/**/*",
   "vendor/**/*",
   "spec/**/*",
+  "tests/**/*",
 ]
 PuppetSyntax.exclude_paths = exclude_paths
 
