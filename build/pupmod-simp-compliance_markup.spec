@@ -1,6 +1,6 @@
 Summary: Additions to enable compliance annotations in Puppet code
 Name: pupmod-simp-compliance_markup
-Version: 1.0.0
+Version: 1.0.1
 Release: 0
 License: Apache 2.0
 Group: Applications/System
@@ -45,9 +45,15 @@ mkdir -p %{buildroot}/%{prefix}/compliance_markup
 # Post uninstall stuff
 
 %changelog
+* Wed Sep 28 2016 Chris Tessmer <chris.tessmer@onyxpoint.com> - 1.0.1-0
+- Moved GitHub org from `onyxpoint` to `simp`
+
 * Mon Mar 07 2016 Chris Tessmer <chris.tessmer@onyxpoint.com> - 1.0.0-0
-- Converted org from `onyxpoint` to `simp`.
+- Converted Forge org from `onyxpoint` to `simp`
 - Fixed linting problems.
+- Provide Ruby 1.8.7 compatibility
+- Ensure that a report is written on every run
+- Updated to properly handle the hash references
 
 * Mon Nov 30 2015 Trevor Vaughan - 0.1.0-0
-- Initial package.
+- Initial package
