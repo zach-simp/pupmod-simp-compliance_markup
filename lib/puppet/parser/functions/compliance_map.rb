@@ -251,6 +251,11 @@ module Puppet::Parser::Functions
       end
     end
 
+    # If we still don't have a reference map, we need to let the user know!
+    if !reference_map || (reference_map.respond_to?(:empty) && reference_map.empty?)
+      raise(Puppet::ParseError, %(compliance_map(): Could not find the 'compliance_map' Hash at the global level, in Hiera, or via Lookup))
+    end
+
     # Pick up our compiler hitchhiker
     # This is only needed when passing arguments. Users should no longer call
     # compliance_map() without arguments directly inside their classes or

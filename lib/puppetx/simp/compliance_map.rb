@@ -26,7 +26,7 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
       # @param compliance_profiles (Array) Compliance_profile strings that are
       #   valid for this ComplianceMap
       #
-      # @param ref_map (Hash) Data that represents the full compliance
+      # @param compliance_mapping (Hash) Data that represents the full compliance
       #   mapping
       #
       #   Example:
@@ -38,7 +38,7 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
       #       }
       #     }
       #
-      def initialize(valid_profiles, ref_map, config={})
+      def initialize(valid_profiles, compliance_mapping, config={})
         return if @initialized
 
         @initialized = true
@@ -62,11 +62,11 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
         @valid_profiles.each do |valid_profile|
           @ref_map[valid_profile] = Hash.new()
 
-          if ref_map[valid_profile]
-            raise @err_msg unless ref_map[valid_profile].respond_to?(:keys)
+          if compliance_mapping[valid_profile]
+            raise @err_msg unless compliance_mapping[valid_profile].respond_to?(:keys)
 
-            ref_map[valid_profile].keys.each do |key|
-              @ref_map[valid_profile] = ref_map[valid_profile]
+            compliance_mapping[valid_profile].keys.each do |key|
+              @ref_map[valid_profile] = compliance_mapping[valid_profile]
             end
           end
         end

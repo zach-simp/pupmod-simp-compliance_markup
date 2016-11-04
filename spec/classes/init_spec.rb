@@ -303,6 +303,45 @@ describe 'compliance_markup' do
                 expect( invalid_entry['system_value'] ).to eq('foo3_1')
               end
             end
+
+            context 'without a compliance_profile variable set' do
+              let(:pre_condition) {
+                <<-EOM
+                  include 'compliance_markup'
+                EOM
+              }
+
+              let(:hieradata) { 'passing_checks' }
+
+              it { is_expected.to(compile.with_all_deps) }
+            end
+
+            context 'with an unknown compliance_profile variable set' do
+              let(:pre_condition) {
+                <<-EOM
+                  $compliance_profile = 'FOO BAR'
+                EOM
+              }
+
+              let(:hieradata) { 'passing_checks' }
+
+              it { is_expected.to(compile.with_all_deps) }
+            end
+
+=begin
+# This should work, but it does not
+            context 'without valid compliance data in Hiera' do
+              let(:pre_condition) {''}
+              # Note: No hieradata set!
+              # let(:hieradata) { 'passing_checks' }
+
+              it 'should fail' do
+                expect {
+                  compile.with_all_deps
+                }.to raise_error(/Could not find/)
+              end
+            end
+=end
           end
         end
       end
