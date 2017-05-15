@@ -12,7 +12,7 @@ module Puppet::Parser::Functions
       ``site.pp``.
 
       When called, the parameters of all classes will be evaluated against
-      global scope variables followed by Hiera data.
+      global scope variables followed by data from lookup().
 
       The variable space against which the class parameters will be evaluated
       must be structured as the following hash:
@@ -40,10 +40,6 @@ module Puppet::Parser::Functions
       Everything else will be converted to a String and can be provided a Ruby
       regular expression of the following format: 're:REGEX' where 'REGEX' does
       **not** include the starting and trailing slashes.
-
-      If you use the special string '__IGNORE__', the check will be ignored.
-      This may be useful when overriding items in a Hierarchy where you want to
-      ignore indiviual checks that were inherited from a lower level.
 
       You may also add compliance data directly to your modules outside of a
       parameter mapping. This is useful if you have more advanced logic that is
@@ -112,6 +108,14 @@ module Puppet::Parser::Functions
           A directory will be created for each FQDN that
           has a report.
 
+       **:default_map**
+
+          Default: None
+
+          The default map that should be used if no others can be found. This
+          will probably never be manually set during normal usage via the
+          compliance_markup module
+
       Example:
         # Only non-compilant entries and only store them on the client and the
         # server
@@ -161,7 +165,8 @@ module Puppet::Parser::Functions
       :format            => 'json',
       :client_report     => false,
       :server_report     => true,
-      :server_report_dir => File.join(Puppet[:vardir], 'simp', 'compliance_reports')
+      :server_report_dir => File.join(Puppet[:vardir], 'simp', 'compliance_reports'),
+      :default_map => {}
     }
 
     # What profile are we using?
@@ -231,29 +236,28 @@ module Puppet::Parser::Functions
     reference_map ||= Hash.new
 
     if ( !reference_map || reference_map.empty? )
-      # If not using an ENC, look in Hiera
-      # Puppet 4 compat
+      # If not using an ENC, check the lookup stack
+      #
+      # We need to check for both 'compliance_map' and
+      # 'compliance_markup::compliance_map' for backward compatibility
       if self.respond_to?(:call_function)
-        begin
-          reference_map = call_function('lookup',['compliance_map',Hash,'deep',nil])
-        # Super-hack because 3.X raises a Puppet::ParseError complaining about
-        # the lookup function
-        rescue NoMethodError, Puppet::ParseError
-          begin
-            reference_map = call_function('hiera_hash',['compliance_map',nil])
-          rescue NoMethodError
-            reference_map = nil
+          reference_map = call_function('lookup',['compliance_map', {'merge' => 'deep', 'default_value' => nil}])
+
+          unless reference_map
+            reference_map = call_function('lookup',['compliance_markup::compliance_map', {'merge' => 'deep', 'default_value' => nil}])
           end
-        end
       else
-        # This is Puppet 3.X only
-        reference_map = function_hiera_hash(['compliance_map',nil])
+        raise(Puppet::ParseError, %(compliance_map(): The lookup() capability is required))
       end
     end
 
     # If we still don't have a reference map, we need to let the user know!
     if !reference_map || (reference_map.respond_to?(:empty) && reference_map.empty?)
-      raise(Puppet::ParseError, %(compliance_map(): Could not find the 'compliance_map' Hash at the global level, in Hiera, or via Lookup))
+      if main_config[:default_map] && !main_config[:default_map].empty?
+        reference_map = main_config[:default_map]
+      else
+        raise(Puppet::ParseError, %(compliance_map(): Could not find the 'compliance_map' Hash at the global level or via Lookup))
+      end
     end
 
     # Pick up our compiler hitchhiker
