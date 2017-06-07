@@ -21,6 +21,35 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
       attr_reader :api_version
       attr_accessor :config
 
+      def initialize(valid_profiles, config)
+        @err_msg = "Error: malformed compliance map, see the function documentation for details."
+
+        @config = config
+
+        @api_version = '1.0.1'
+
+        @valid_profiles ||= Array(valid_profiles)
+
+        # Collect all cache misses to sticking onto the end of the profile reports
+        @ref_misses = Hash.new()
+
+        # Collect any resources that are in our mapping but have not been included
+        @unmapped_resources = Hash.new()
+
+        # Static Information
+        @compliance_map = ordered_hash
+        @compliance_map['version'] = @api_version
+
+        @compliance_map.merge!(@config[:extra_data]) if @config[:extra_data]
+
+        @compliance_map['compliance_profiles'] = ordered_hash
+        @compliance_map['site_data'] = Hash.new()
+
+        @valid_profiles.each do |profile|
+          @compliance_map['compliance_profiles'][profile] ||= Hash.new()
+        end
+      end
+
       # Set up the main data structures
       #
       # @param compliance_profiles (Array) Compliance_profile strings that are
@@ -38,54 +67,54 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
       #       }
       #     }
       #
-      def initialize(valid_profiles, compliance_mapping, config={})
-        return if @initialized
+      def setup_compliance_map(compliance_mapping)
+        @compliance_map['site_data'] = @config[:site_data] if @config[:site_data]
 
-        @initialized = true
-        @api_version = '1.0.0'
+        @valid_profiles.sort.each do |profile|
+          @compliance_map['compliance_profiles'][profile] ||= ordered_hash
+          @compliance_map['compliance_profiles'][profile]['summary'] ||= ordered_hash
+          @compliance_map['compliance_profiles'][profile]['compliant'] ||= ordered_hash
+          @compliance_map['compliance_profiles'][profile]['non_compliant'] ||= ordered_hash
+          @compliance_map['compliance_profiles'][profile]['documented_missing_resources'] ||= Array.new()
+          @compliance_map['compliance_profiles'][profile]['documented_missing_parameters'] ||= Array.new()
+          @compliance_map['compliance_profiles'][profile]['custom_entries'] ||= ordered_hash
 
-        @config = config
+          @ref_misses[profile] ||= Array.new()
+          @unmapped_resources[profile] ||= Array.new()
+        end
+      end
 
-        @valid_profiles = Array(valid_profiles)
+      def catalog_to_map(catalog)
+        catalog_map = Hash.new()
 
-        @err_msg = "Error: malformed compliance map, see the function documentation for details."
+        catalog_map['compliance_map::percent_sign'] = '%'
+        catalog_map['compliance_map'] = {
+          'version'                => @api_version,
+          'generated_via_function' => Hash.new()
+        }
 
-        # Hold an, easy to access, version of the map
-        @ref_map = Hash.new()
+        catalog.resources.each do |resource|
+          # Ignore our own nonsense
+          next if resource.name == 'Compliance_markup'
 
-        # Collect all cache misses to sticking onto the end of the profile reports
-        @ref_misses = Hash.new()
+          if resource.name.is_a?(String) && (resource.name[0] =~ /[A-Z]/) && resource.parameters
+            resource.parameters.each do |param_array|
+              param = param_array.last
 
-        # Collect any resources that are in our mapping but have not been included
-        @unmapped_resources = Hash.new()
+              param_name = %{#{resource.name}::#{param.name}}.downcase
 
-        @valid_profiles.each do |valid_profile|
-          @ref_map[valid_profile] = Hash.new()
+              # We only want things with values
+              next if param.value.nil?
 
-          if compliance_mapping[valid_profile]
-            raise @err_msg unless compliance_mapping[valid_profile].respond_to?(:keys)
-
-            compliance_mapping[valid_profile].keys.each do |key|
-              @ref_map[valid_profile] = compliance_mapping[valid_profile]
+              catalog_map['compliance_map']['generated_via_function'][param_name] = {
+              'identifiers' => ['GENERATED'],
+              'value'       => param.value
+            }
             end
           end
         end
 
-        @compliance_map = ordered_hash
-        @compliance_map['version'] = @api_version
-        @compliance_map['compliance_profiles'] = ordered_hash
-
-        @valid_profiles.sort.each do |profile|
-          @compliance_map['compliance_profiles'][profile] = ordered_hash
-          @compliance_map['compliance_profiles'][profile]['compliant'] = ordered_hash
-          @compliance_map['compliance_profiles'][profile]['non_compliant'] = ordered_hash
-          @compliance_map['compliance_profiles'][profile]['documented_missing_resources'] = Array.new()
-          @compliance_map['compliance_profiles'][profile]['documented_missing_parameters'] = Array.new()
-          @compliance_map['compliance_profiles'][profile]['custom_entries'] = ordered_hash
-
-          @ref_misses[profile] = Array.new()
-          @unmapped_resources[profile] = Array.new()
-        end
+        return catalog_map.to_yaml
       end
 
       # Get all of the parts together for proper reporting and return the
@@ -95,6 +124,22 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
         report_types = @config[:report_types]
 
         @valid_profiles.each do |profile|
+
+          # Create the summary report
+          num_compliant     = formatted_map['compliance_profiles'][profile]['compliant'] ? formatted_map['compliance_profiles'][profile]['compliant'].keys.count : 0
+          num_non_compliant = formatted_map['compliance_profiles'][profile]['non_compliant'] ? formatted_map['compliance_profiles'][profile]['non_compliant'].keys.count : 0
+
+          total_checks = num_non_compliant + num_compliant
+          percent_compliant = total_checks == 0 ? 0 : ((num_compliant.to_f/total_checks) * 100).round(0)
+
+          formatted_map['compliance_profiles'][profile]['summary'] = {
+            'compliant'                     => num_compliant,
+            'non_compliant'                 => num_non_compliant,
+            'percent_compliant'             => percent_compliant,
+            'documented_missing_resources'  => @unmapped_resources[profile].count,
+            'documented_missing_parameters' => @ref_misses[profile].count
+          }
+
           unless report_types.include?('full')
             # Remove the built up content that does not apply to this system
             ['compliant', 'non_compliant', 'custom_entries'].each do |report_type|
@@ -115,6 +160,13 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
               formatted_map['compliance_profiles'][profile]['documented_missing_parameters'] = @ref_misses[profile].sort
             end
           end
+
+          # Strip out anything not relevant to the report
+          formatted_map['compliance_profiles'][profile].delete_if{|k|
+            val = formatted_map['compliance_profiles'][profile][k]
+
+            val.nil? || val.empty?
+          }
         end
 
         return formatted_map
@@ -125,20 +177,22 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
       end
 
       def to_json
-        # Puppet 3.X compatibility
-        begin
-          require 'puppet/util/pson'
-        rescue LoadError
-          require 'puppet/external/pson/pure'
-        end
+        require 'json'
 
-        return PSON.pretty_generate(format_map)
+        output = JSON.pretty_generate(format_map)
+
+        return output
       end
 
       def to_yaml
         require 'yaml'
 
-        return format_map.to_yaml
+        output = format_map.to_yaml
+
+        # Get rid of the ordered hash object information
+        output.gsub!(%r( !ruby/.+CMOrderedHash), '')
+
+        return output
       end
 
       # Add a custom entry to the Map
@@ -166,17 +220,23 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
 
           data_hash.merge!(opts)
 
+          @compliance_map['compliance_profiles'][profile] ||= ordered_hash
+          @compliance_map['compliance_profiles'][profile]['custom_entries'] ||= ordered_hash
           @compliance_map['compliance_profiles'][profile]['custom_entries'][resource_name] ||= []
 
           @compliance_map['compliance_profiles'][profile]['custom_entries'][resource_name] << data_hash
         end
       end
 
-      def process_catalog(catalog)
+      def process_catalog(catalog, reference_map)
+        setup_compliance_map(reference_map)
+
         target_resources = catalog.resources.select{|x| !x.parameters.empty?}
 
         @valid_profiles.each do |profile|
-          @unmapped_resources[profile] = @ref_map[profile].keys.collect do |x|
+          next unless reference_map[profile]
+
+          @unmapped_resources[profile] = reference_map[profile].keys.collect do |x|
             _tmp = x.split('::')
             _tmp.pop
             x = _tmp.join('::')
@@ -186,7 +246,7 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
           #
           # Any items that remain are things that had a resource in Hiera but
           # were not found on the system
-          @ref_misses[profile] = @ref_map[profile].keys
+          @ref_misses[profile] = reference_map[profile].keys
 
           target_resources.each do |resource|
             human_name = resource.to_s
@@ -196,7 +256,7 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
 
             resource.parameters.keys.sort.each do |param|
               resource_ref = [resource_name, param].join('::')
-              ref_entry = @ref_map[profile][resource_ref]
+              ref_entry = reference_map[profile][resource_ref]
 
               if ref_entry
                 @ref_misses[profile].delete(resource_ref)
@@ -205,22 +265,32 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
                 next
               end
 
+              # Fail if the entry doesn't have the proper format
+              required_metadata = ['identifiers','value']
+              required_metadata.each do |md|
+                raise "#{@err_msg} Failed on #{profile} profile, #{resource_ref} #{ref_entry}, metadata #{md}" if ref_entry[md].nil?
+              end
+
+              # Perform the actual matching
               ref_value = ref_entry['value']
               tgt_value = resource.parameters[param].value
 
-              if ref_value.to_s.strip == tgt_value.to_s.strip
-                compliance_status = 'compliant'
-              else
-                compliance_status = 'non_compliant'
-              end
+              compliance_status = 'non_compliant'
 
-              required_metadata = ['identifiers','value']
-              required_metadata.each do |md|
-                raise "#{@err_msg} Failed on #{profile} profile, #{resource_ref} #{ref_entry}, medatada #{md}" if ref_entry[md].nil?
+              # Regular expression match
+              if ref_value =~ /^re:(.+)/
+                comparator = Regexp.new($1)
+
+                if tgt_value =~ comparator
+                  compliance_status = 'compliant'
+                end
+              # Default match
+              elsif ref_value.to_s.strip == tgt_value.to_s.strip
+                compliance_status = 'compliant'
               end
 
               report_data = ordered_hash
-              report_data['identifiers'] = Array(@ref_map[profile][resource_ref]['identifiers'])
+              report_data['identifiers'] = Array(reference_map[profile][resource_ref]['identifiers'])
               report_data['compliant_value'] = ref_value
               report_data['system_value'] = tgt_value
 
@@ -251,6 +321,7 @@ unless PuppetX.const_get("SIMP#{Puppet[:environment]}").const_defined?('Complian
       end
 
       private
+
     end
   )
 end

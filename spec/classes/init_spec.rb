@@ -3,11 +3,10 @@ require 'spec_helper'
 describe 'compliance_markup' do
   context 'supported operating systems' do
     on_supported_os.each do |os, facts|
-      let(:report_version) { '1.0.0' }
+      let(:report_version) { '1.0.1' }
 
       context "on #{os}" do
         context 'with data in modules' do
-
           before(:each) do
             @server_report_dir = Dir.mktmpdir
 
@@ -28,17 +27,22 @@ describe 'compliance_markup' do
             File.exist?(@server_report_dir) && FileUtils.remove_entry(@server_report_dir)
           end
 
-          let(:report) {
+          let(:raw_report) {
             # There can be only one
             report_file = "#{params['options']['server_report_dir']}/#{facts[:fqdn]}/compliance_report.yaml"
 
-            @report = YAML.load_file(report_file)
+            File.read(report_file)
+          }
+
+          let(:report) {
+            @report = YAML.load(raw_report)
 
             @report
           }
 
           if ['RedHat', 'CentOS'].include?(facts[:os][:name])
             if ['6','7'].include?(facts[:os][:release][:major])
+
               context 'when running with the inbuilt data' do
                 pre_condition_common = <<-EOM
                   class auditd (
@@ -81,11 +85,43 @@ describe 'compliance_markup' do
                 it 'should have a failing check' do
                   expect( report['compliance_profiles']['nist_800_53_rev4']['non_compliant'] ).to_not be_empty
                 end
+
+                it 'should not have ruby serialized objects in the output' do
+                  expect(raw_report).to_not match(/!ruby/)
+                end
+
+                context 'when dumping the catalog compliance_map' do
+                  let(:catalog_dump) {
+                    # There can be only one
+                    File.read("#{params['options']['server_report_dir']}/#{facts[:fqdn]}/catalog_compliance_map.yaml")
+                  }
+
+                  let(:params){
+                    params = @default_params.dup
+                    params['options']['catalog_to_compliance_map'] = true
+                    params
+                  }
+
+                  it 'should have a generated catlaog' do
+                    expect(File).to exist("#{params['options']['server_report_dir']}/#{facts[:fqdn]}/catalog_compliance_map.yaml")
+
+                    expect(catalog_dump).to match(/GENERATED/)
+                  end
+
+                  it 'should not have Ruby serialized objects in the dump' do
+                    expect(catalog_dump).to_not match(/!ruby/)
+                  end
+
+                  it 'should be valid YAML' do
+                    expect {
+                      YAML.load(catalog_dump)
+                    }.to_not raise_exception
+                  end
+                end
               end
             end
           end
         end
-
 
         context 'with a fabricated test profile' do
 
@@ -191,8 +227,7 @@ describe 'compliance_markup' do
 
                 let(:params) { @default_params }
 
-                it {
-                  is_expected.to(create_class('compliance_markup')) }
+                it { is_expected.to(create_class('compliance_markup')) }
 
                 it 'should not have a compliance File Resource' do
                   expect(compliance_file_resource).to be_nil
@@ -204,6 +239,13 @@ describe 'compliance_markup' do
 
                 it 'should have a server side compliance node report' do
                   expect(File).to exist("#{params['options']['server_report_dir']}/#{facts[:fqdn]}/compliance_report.#{report_format}")
+                end
+
+                it 'should have the default extra data in the report' do
+                  expect(report['fqdn']).to eq(facts[:fqdn])
+                  expect(report['hostname']).to eq(facts[:hostname])
+                  expect(report['ipaddress']).to eq(facts[:ipaddress])
+                  expect(report['puppetserver_info']).to eq('local_compile')
                 end
               end
 
@@ -267,8 +309,8 @@ describe 'compliance_markup' do
                   expect( report['compliance_profiles'][profile_name]['compliant'] ).to_not be_empty
                 end
 
-                it 'should have a non_compliant report section' do
-                  expect( report['compliance_profiles'][profile_name]['non_compliant'] ).to be_empty
+                it 'should not include an empty non_compliant report section' do
+                  expect( report['compliance_profiles'][profile_name]['non_compliant'] ).to be_nil
                 end
 
                 it 'should have a documented_missing_resources section' do
@@ -283,20 +325,20 @@ describe 'compliance_markup' do
                   expect( report['compliance_profiles']['other_profile'] ).to_not be_empty
                 end
 
-                it 'should have a compliance section for the "other" profile' do
-                  expect( report['compliance_profiles']['other_profile']['compliant'] ).to be_empty
+                it 'should not include an empty compliant section for the "other" profile' do
+                  expect( report['compliance_profiles']['other_profile']['compliant'] ).to be_nil
                 end
 
-                it 'should have a non_compliant section for the "other" profile' do
-                  expect( report['compliance_profiles']['other_profile']['non_compliant'] ).to be_empty
+                it 'should not include an empty non_compliant section for the "other" profile' do
+                  expect( report['compliance_profiles']['other_profile']['non_compliant'] ).to be_nil
                 end
 
-                it 'should have a documented_missing_resources section for the "other" profile' do
-                  expect( report['compliance_profiles']['other_profile']['documented_missing_resources'] ).to be_empty
+                it 'should not include an empty documented_missing_resources section for the "other" profile' do
+                  expect( report['compliance_profiles']['other_profile']['documented_missing_resources'] ).to be_nil
                 end
 
-                it 'should have a documented_missing_parameters section for the "other" profile' do
-                  expect( report['compliance_profiles']['other_profile']['documented_missing_parameters'] ).to be_empty
+                it 'should not include an empty documented_missing_parameters section for the "other" profile' do
+                  expect( report['compliance_profiles']['other_profile']['documented_missing_parameters'] ).to be_nil
                 end
 
                 it 'should have a custom_entries section for the "other" profile' do
@@ -321,16 +363,16 @@ describe 'compliance_markup' do
                   expect( report['compliance_profiles'][profile_name] ).to_not be_empty
                 end
 
-                it 'should have a compliant report section' do
-                  expect( report['compliance_profiles'][profile_name]['compliant'] ).to be_empty
+                it 'should not include an empty compliant report section' do
+                  expect( report['compliance_profiles'][profile_name]['compliant'] ).to be_nil
                 end
 
-                it 'should have a non_compliant report section' do
-                  expect( report['compliance_profiles'][profile_name]['non_compliant'] ).to be_empty
+                it 'should not include an empty non_compliant report section' do
+                  expect( report['compliance_profiles'][profile_name]['non_compliant'] ).to be_nil
                 end
 
-                it 'should have a documented_missing_resources section' do
-                  expect( report['compliance_profiles'][profile_name]['documented_missing_resources'] ).to be_empty
+                it 'should not include an empty documented_missing_resources section' do
+                  expect( report['compliance_profiles'][profile_name]['documented_missing_resources'] ).to be_nil
                 end
 
                 it 'should have a documented_missing_parameters section' do
@@ -411,8 +453,8 @@ describe 'compliance_markup' do
               end
 
 =begin
-# Unknown why this does not work
-              context 'without valid compliance data in Hiera' do
+              # Unknown why this does not work
+              xcontext 'without valid compliance data in Hiera' do
                 let(:pre_condition) {''}
                 # NOTE: No hieradata set!
 
