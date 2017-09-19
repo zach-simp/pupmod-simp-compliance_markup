@@ -17,7 +17,12 @@ class Hiera
         # Monkey patch the catalog *object* to add a _compliance_cache accessor
         # We do this to prevent environment poisoning by monkey patching the class,
         # and it still allows us to have a catalog scoped cache.
-
+        env = scope.catalog.environment
+        if (env.class.to_s == "String")
+          @environment = env
+        else
+          @environment = env.name.to_s
+        end
         methods = scope.catalog.methods
         if (methods.include?(:_compliance_cache))
           @cache = scope.catalog._compliance_cache
@@ -58,6 +63,14 @@ class Hiera
       # These functions are helpers for enforcement(), that implement
       # the different caching systems on a v3 vs v5 backend
       #
+      def codebase()
+        "Hiera::Backend::Simp_compliance_enforcement_backend"
+      end
+
+      def environment()
+        @environment
+      end
+
       def debug(message)
         Hiera.debug(message)
       end

@@ -28,7 +28,6 @@ Table of Contents
   - [Example 2 - Custom Compliance Map](#example-2---custom-compliance-map)
 - [Enforcement](#enforcement)
   - [v5 Backend Configuration](#v5-backend-configuration)
-  - [v3 Backend Configurationa](#v3-backend-configurationa)
   - [Configuring profiles to enforce](#configuring-profiles-to-enforce)
 - [Limitations](#limitations)
 - [Development](#development)
@@ -335,9 +334,8 @@ enforce compliance profile settings on any module when it is included. It uses
 the compliance_markup::enforcement array to determine the profiles to use, and
 which profiles take priority. 
 
-Both a legacy v3 backend, and a modern Hiera v5 backend have been provided. It
-is highly recommended to use the Hiera v5 backend if the puppet agent on your 
-puppetservers are 4.9 or higher.
+Only a modern Hiera v5 backend have been provided. Because of this, the Hiera
+backend is only available on versions of Puppet 4.10 or above.
 
 
 ### v5 Backend Configuration
@@ -346,7 +344,7 @@ puppetservers are 4.9 or higher.
 ---
 version: 5
 hierarchy:
-  - name: Compliance
+  - name: SIMP Compliance Engine
     lookup_key: compliance_markup::enforcement
   - name: Common
     path: default.yaml
@@ -356,22 +354,6 @@ defaults:
 
 ```
 
-### v3 Backend Configurationa
-
-```ruby
----
-:backends:
-  - yaml
-  - simp_compliance_enforcement
-:yaml:
-  :datadir: "/etc/puppetlabs/code/environments/%{environment}/hieradata"
-:simp_compliance_enforcement:
-  :datadir: "/etc/puppetlabs/code/environments/%{environment}/hieradata"
-:hierarchy:
-  - default
-:logger: console
-
-```
 
 ### Configuring profiles to enforce
 

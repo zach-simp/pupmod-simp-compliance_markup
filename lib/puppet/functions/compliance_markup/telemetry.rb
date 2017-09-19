@@ -1,46 +1,42 @@
-Puppet::Functions.create_function(:'compliance_markup::enforcement') do
-  dispatch :hiera_enforcement do
-    param "String", :key
-    param "Hash", :options
-    param "Puppet::LookupContext", :context
+Puppet::Functions.create_function(:'compliance_markup::telemetry') do
+  dispatch :telemetry do
+    param 'String', :key
   end
   def initialize(closure_scope, loader)
     filename = File.dirname(File.dirname(File.dirname(File.dirname(__FILE__)))) + '/puppetx/simp/compliance_mapper.rb'
     self.instance_eval(File.read(filename),filename)
     super(closure_scope, loader)
   end
-  def hiera_enforcement(key, options, context)
+  def telemetry(key)
     retval = nil
-    @context = context
     begin
-      retval = enforcement(key) do |k, default|
-         call_function('lookup', k, { 'default_value' => default})
+      retval = enforcement(key, { 'mode' => 'telemetry'}) do |k, default|
+        call_function('lookup', k, { 'default_value' => default})
       end
     rescue => e
       unless (e.class.to_s == 'ArgumentError')
         debug("Threw error #{e.to_s}")
       end
-      context.not_found
     end
     retval
   end
   def codebase()
-    'compliance_markup::enforcement'
+    'compliance_markup::telemetry'
   end
   def environment()
     closure_scope.environment.name.to_s
   end
   def debug(message)
-    @context.explain() { "#{message}" }
+    false
   end
   def cache(key, value)
-    @context.cache(key, value)
+    nil
   end
   def cached_value(key)
-    @context.cached_value(key)
+    nil
   end
   def cache_has_key(key)
-    @context.cache_has_key(key)
+    false
   end
 end
 

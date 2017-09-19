@@ -19,6 +19,18 @@ describe 'compliance_markup::test' do
               end
             end
           end
+          profiles = [ 'disa', 'nist']
+          profiles.each do |profile|
+            order = ([ profile ] + (profiles - [ profile ])).to_s
+            context "when order = #{order} and data file is vendored v2" do
+              let(:facts) { facts }
+              let(:hieradata){ "#{profile}_spec" }
+
+              it "should return #{profile}" do
+                is_expected.to(create_notify('compliance_markup::test::v2variable').with_message("compliance_markup::test::v2variable = #{profile}"))
+              end
+            end
+          end
         end
 
         profiles = [ 'disa', 'nist']
