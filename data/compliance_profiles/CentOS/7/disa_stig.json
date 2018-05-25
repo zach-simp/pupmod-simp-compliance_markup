@@ -823,6 +823,21 @@
         ],
         "value": true
       },
+      "postfix::main_cf_hash": {
+        "identifiers": [
+          "RHEL-07-040680",
+          "SRG-OS-000480-GPOS-00227",
+          "CCI-000366"
+        ],
+        "value": {
+          "smtpd_client_restrictions":  {
+            "value": [
+              "permit_mynetworks",
+              "reject"
+            ]
+          }
+        }
+      },
       "pupmod::master::auditd": {
         "identifiers": [
           "RHEL-07-030310",
