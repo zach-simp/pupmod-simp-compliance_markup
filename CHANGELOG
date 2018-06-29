@@ -1,3 +1,11 @@
+* Thu Jun 28 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 2.3.4-0
+- DISA STIG changes:
+  - Added gdm::settings
+  - Added gdm::banner
+  - Added gdm::simp_banner
+  - Added gdm::dconf_hash
+  - Added gnome::dconf_hash
+
 * Thu Jun 28 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 2.3.4-0
 - DISA STIG changes:
   - Updated for pupmod-simp-auditd 8.0.0.  This enforces the
