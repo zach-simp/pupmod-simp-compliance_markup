@@ -13,6 +13,7 @@ sudo: false
 
 bundler_args: --without development system_tests --path .vendor
 
+
 notifications:
   email: false
 
@@ -25,9 +26,6 @@ before_install:
   - rm -f Gemfile.lock
 
 jobs:
-  allow_failures:
-    - env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
-
   include:
     - stage: check
       rvm: 2.4.1
@@ -40,8 +38,8 @@ jobs:
         - bundle exec rake pkg:check_version
         - bundle exec rake pkg:compare_latest_tag
         - bundle exec rake pkg:create_tag_changelog
-        - ruby -r json -e 'Dir.glob("**/*.json").map{|j| puts "Attempting to load "+j;JSON.load(File.new(j))}'
-        - ruby -r yaml -e 'Dir.glob("**/*.y{,a}ml").map{|y| puts "Attempting to load "+y;YAML.load(File.new(y))}'
+        - ruby -r json -e 'Dir.glob("data/**/*.json").map{|j| puts "Attempting to load "+j;JSON.load(File.new(j))}'
+        - ruby -r yaml -e 'Dir.glob("data/**/*.y{,a}ml").map{|y| puts "Attempting to load "+y;YAML.load(File.new(y))}'
         - bundle exec puppet module build
 
     - stage: spec
@@ -76,9 +74,21 @@ jobs:
         - docker
       script:
         - bundle exec rake spec_clean
-        - bundle exec rake beaker:suites[default,docker]
+        - bundle exec rake beaker:suites[default,docker_centos]
       # PUPPET_VERSION can't handle a '~' here due to code in the test
       env: PUPPET_VERSION="4.8.2"
+
+    - stage: acceptance
+      sudo: required
+      rvm: 2.4.1
+      bundler_args: --without development --path .vendor
+      services:
+        - docker
+      script:
+        - bundle exec rake spec_clean
+        - bundle exec rake beaker:suites[default,docker_centos]
+      # PUPPET_VERSION can't handle a '~' here due to code in the test
+      env: PUPPET_VERSION="5.5.3" BEAKER_PUPPET_COLLECTION="puppet5"
 
     # This needs to be last since we have an acceptance test
     - stage: deploy
