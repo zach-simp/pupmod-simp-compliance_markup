@@ -119,4 +119,3 @@ describe 'compliance_markup class enforcement' do
     end
   end
 end
-# vim: set expandtab ts=2 sw=2:

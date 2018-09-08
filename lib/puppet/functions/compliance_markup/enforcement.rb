@@ -5,7 +5,8 @@ Puppet::Functions.create_function(:'compliance_markup::enforcement') do
     param "Puppet::LookupContext", :context
   end
   def initialize(closure_scope, loader)
-    filename = File.dirname(File.dirname(File.dirname(File.dirname(__FILE__)))) + '/puppetx/simp/compliance_mapper.rb'
+    filename = File.expand_path('../../../../puppetx/simp/compliance_mapper.rb', __FILE__)
+
     self.instance_eval(File.read(filename),filename)
     super(closure_scope, loader)
   end
@@ -43,5 +44,3 @@ Puppet::Functions.create_function(:'compliance_markup::enforcement') do
     @context.cache_has_key(key)
   end
 end
-
-# vim: set expandtab ts=2 sw=2:

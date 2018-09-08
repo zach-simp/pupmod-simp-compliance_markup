@@ -39,5 +39,3 @@ Puppet::Functions.create_function(:'compliance_markup::telemetry') do
     false
   end
 end
-
-# vim: set expandtab ts=2 sw=2:

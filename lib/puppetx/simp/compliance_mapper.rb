@@ -52,52 +52,62 @@ def enforcement(key, options = {"mode" => "value"}, &block)
       else
         lock = false
       end
-      if (lock == false)
+      if lock == false
+
         debug_output = {}
         cache("lock", true)
+
         begin
           profile_list = cached_lookup "compliance_markup::enforcement", [], &block
           unless (profile_list == [])
             debug("debug: compliance_markup::enforcement set to #{profile_list}, attempting to enforce")
+
             profile = profile_list.hash.to_s
-            if (cache_has_key("compliance_map_#{profile}"))
+
+            if cache_has_key("compliance_map_#{profile}")
               profile_map = cached_value("compliance_map_#{profile}")
             else
-              # if (key == "compliance_markup::test::testvariable")
-              #   require 'pry'
-              #   binding.pry
-              # end
               debug("debug: compliance map for #{profile_list} not found, starting compiler")
+
               compile_start_time = Time.now
-              profile_compiler = compiler_class.new(self)
+              profile_compiler   = compiler_class.new(self)
+
               profile_compiler.load(&block)
+
               profile_map = profile_compiler.list_puppet_params(profile_list).cook do |item|
                 debug_output[item["parameter"]] = item["telemetry"]
                 item[options["mode"]]
               end
+
               cache("debug_output_#{profile}", debug_output)
               cache("compliance_map_#{profile}", profile_map)
+
               compile_end_time = Time.now
+
               debug("debug: compiled compliance_map containing #{profile_map.size} keys in #{compile_end_time - compile_start_time} seconds")
             end
-            if (key == "compliance_markup::debug::dump")
+            if key == "compliance_markup::debug::dump"
                retval = profile_map
             else
               # Handle a knockout prefix
-              unless (profile_map.key?("--" + key))
-                if (profile_map.key?(key))
-                  retval = profile_map[key]
+              unless profile_map.key?("--" + key)
+                if profile_map.key?(key)
                   debug("debug: v2 details for #{key}")
-                  files = {}
+
+                  retval = profile_map[key]
+                  files  = {}
+
                   debug_output[key].each do |telemetryinfo|
                     unless files.key?(telemetryinfo["filename"])
                       files[telemetryinfo["filename"]] = []
                     end
                     files[telemetryinfo["filename"]] << telemetryinfo
                   end
-                  files.each do |key, value|
-                    debug("     #{key}:")
-                    value.each do |value2|
+
+                  files.each do |k, v|
+                    debug("     #{k}:")
+
+                    v.each do |value2|
                       debug("             #{value2['id']}")
                       debug("                        #{value2['value']['settings']['value']}")
                     end
@@ -110,12 +120,12 @@ def enforcement(key, options = {"mode" => "value"}, &block)
             # option that toggles it on. This would allow un-overridable enforcement at the hiera
             # layer (though it can still be overridden by resource-style class definitions)
           end
-        rescue Exception => ex
+        rescue
         ensure
           cache("lock", false)
         end
       end
-      if (retval == :notfound)
+      if retval == :notfound
         throw :no_such_key
       end
   end
@@ -126,7 +136,7 @@ end
 # These cache functions are assumed to be created by the wrapper
 # object, either the v3 backend or v5 backend.
 def cached_lookup(key, default, &block)
-  if (cache_has_key(key))
+  if cache_has_key(key)
     retval = cached_value(key)
   else
     retval = yield key, default
@@ -137,43 +147,49 @@ end
 
 def compiler_class()
   Class.new do
+    attr_reader :compliance_data
+    attr_reader :callback
+    attr_accessor :v2
+
     def initialize(object)
       require 'semantic_puppet'
+
       @callback = object
     end
 
-    def callback
-      @callback
-    end
-
     def load(&block)
-
       @callback.debug("callback = #{callback.codebase}")
-      @compliance_data = {}
-      module_scope_compliance_map = callback.cached_lookup "compliance_markup::compliance_map", {}, &block
-      top_scope_compliance_map = callback.cached_lookup "compliance_map", {}, &block
+
+      @compliance_data                                               = {}
+
+      module_scope_compliance_map                                    = callback.cached_lookup "compliance_markup::compliance_map", {}, &block
+      top_scope_compliance_map                                       = callback.cached_lookup "compliance_map", {}, &block
+
       @compliance_data["puppet://compliance_markup::compliance_map"] = (module_scope_compliance_map)
-      @compliance_data["puppet://compliance_map"] = (top_scope_compliance_map)
-      location = __FILE__
-      moduleroot = File.dirname(File.dirname(File.dirname(File.dirname(File.dirname(location)))))
-      rootpaths = {}
+      @compliance_data["puppet://compliance_map"]                    = (top_scope_compliance_map)
+
+      moduleroot                                                     = File.expand_path('../../../../../', __FILE__)
+      rootpaths                                                      = {}
+
       # Dynamically load v1 compliance map data from modules.
       # Create a set of yaml files (all containing compliance info) in your modules, in
       # lib/puppetx/compliance/module_name/v1/whatever.yaml
       # Note: do not attempt to merge or rely on merge behavior for v1
       begin
-        environmentroot = "#{Puppet[:environmentpath]}/#{callback.environment}"
-        env = Puppet::Settings::EnvironmentConf.load_from(environmentroot, ["/test"])
-        rmodules = env.modulepath.split(":")
+        environmentroot            = "#{Puppet[:environmentpath]}/#{callback.environment}"
+        env                        = Puppet::Settings::EnvironmentConf.load_from(environmentroot, ["/test"])
+        rmodules                   = env.modulepath.split(":")
         rootpaths[environmentroot] = true
-      rescue Exception => ex
-        callback.debug ex
+      rescue StandardError => ex
+        callback.debug(ex)
+
         rmodules = []
       end
-      modpaths = rmodules + [moduleroot]
+      modpaths  = rmodules + [moduleroot]
       modpaths2 = []
+
       modpaths.each do |modpath|
-        if (modpath == "$basemodulepath")
+        if modpath == "$basemodulepath"
           modpaths2 = modpaths2 + Puppet[:basemodulepath].split(":")
         else
           modpaths2 = modpaths2 + [modpath]
@@ -199,6 +215,7 @@ def compiler_class()
             "/SIMP/compliance_profiles",
             "/simp/compliance_profiles",
         ]
+
         ['yaml', 'json'].each do |type|
           load_paths.each do |pathspec|
             interp_pathspecs = [
@@ -221,46 +238,41 @@ def compiler_class()
           end
         end
       end
+
       @v2 = v2_compiler.new()
+
       @compliance_data.each do |filename, map|
-        if (map.key?("version"))
+        if map.key?("version")
           version = SemanticPuppet::Version.parse(map["version"])
-          case version.major
-            when 2
-              v2.import(filename, map);
+
+          if version.major == 2
+            v2.import(filename, map)
           end
         end
       end
     end
 
-    def compliance_data
-      @compliance_data
-    end
-
-    def v2
-      @v2
-    end
-
-    def v2=(value)
-      @v2 = value
-    end
     def ce
       v2.ce
     end
+
     def control
       v2.control
     end
+
     def check
       v2.check
     end
+
     def profile
       v2.profile
     end
+
     def v2_compiler()
       Class.new do
         def initialize()
           @control_list = {}
-          @ce_list = {}
+          @configuration_element_list = {}
           @check_list = {}
           @profile_list = {}
           @data_locations = {
@@ -272,7 +284,7 @@ def compiler_class()
         end
 
         def ce
-          @ce_list
+          @configuration_element_list
         end
 
         def control
@@ -292,43 +304,63 @@ def compiler_class()
             case key
               when "profiles"
                 value.each do |profile, map|
-                  unless (@profile_list.key?(profile))
-                    @profile_list[profile] = {}
+                  @profile_list[profile] ||= {}
+
+                  map.each do |k, v|
+                    @profile_list[profile][k] = v
                   end
-                  map.each do |key2, value|
-                    @profile_list[profile][key2] = value
-                  end
-                  @profile_list[profile]["telemetry"] = [{"filename" => filename, "path" => "#{key}/#{profile}", "id" => "#{profile}", "value" => Marshal.load(Marshal.dump(map))}]
+
+                  @profile_list[profile]["telemetry"] = [{
+                    "filename" => filename,
+                    "path"     => "#{key}/#{profile}",
+                    "id"       => "#{profile}",
+                    "value"    => Marshal.load(Marshal.dump(map))
+                  }]
                 end
               when "controls"
                 value.each do |profile, map|
-                  unless (@control_list.key?(profile))
-                    @control_list[profile] = {}
+                  @control_list[profile] ||= {}
+
+                  map.each do |k, v|
+                    @control_list[profile][k] = v
                   end
-                  map.each do |key2, value|
-                    @control_list[profile][key2] = value
-                  end
-                  @control_list[profile]["telemetry"] = [{"filename" => filename, "path" => "#{key}/#{profile}", "id" => "#{profile}", "value" => Marshal.load(Marshal.dump(map))}]
+
+                  @control_list[profile]["telemetry"] = [{
+                    "filename" => filename,
+                    "path"     => "#{key}/#{profile}",
+                    "id"       => "#{profile}",
+                    "value"    => Marshal.load(Marshal.dump(map))
+                  }]
                 end
               when "checks"
                 value.each do |profile, map|
-                  unless (@check_list.key?(profile))
-                    @check_list[profile] = {}
+                  @check_list[profile] ||= {}
+
+                  map.each do |k, v|
+                    @check_list[profile][k] = v
                   end
-                  map.each do |key2, value|
-                    @check_list[profile][key2] = value
-                  end
-                  @check_list[profile]["telemetry"] = [{"filename" => filename, "path" => "#{key}/#{profile}", "id" => "#{profile}", "value" => Marshal.load(Marshal.dump(map))}]
+
+                  @check_list[profile]["telemetry"] = [{
+                    "filename" => filename,
+                    "path"     => "#{key}/#{profile}",
+                    "id"       => "#{profile}",
+                    "value"    => Marshal.load(Marshal.dump(map))
+                  }]
                 end
               when "ce"
                 value.each do |profile, map|
-                  unless (@ce_list.key?(profile))
-                    @ce_list[profile] = {}
+                  @configuration_element_list[profile] ||= {}
+
+                  map.each do |k, v|
+                    @configuration_element_list[profile][k] = v
                   end
-                  map.each do |key2, value|
-                    @ce_list[profile][key2] = value
-                  end
-                  @ce_list[profile]["telemetry"] = [{"filename" => filename, "path" => "#{key}/#{profile}", "id" => "#{profile}", "value" => Marshal.load(Marshal.dump(map))}]
+
+                  @configuration_element_list[profile]["telemetry"] = [{
+                    "filename" => filename,
+                    "path"     => "#{key}/#{profile}",
+                    "id"       => "#{profile}",
+                    "value"    => Marshal.load(Marshal.dump(map))
+                  }]
                 end
             end
           end
@@ -336,17 +368,21 @@ def compiler_class()
 
         def list_puppet_params(profile_list)
           retval = {}
+
           profile_list.reverse.each do |profile|
-            if (@profile_list.key?(profile))
+            if @profile_list.key?(profile)
               info = @profile_list[profile]
+
               @check_list.each do |check, spec|
                 specification = Marshal.load(Marshal.dump(spec))
                 continue = true
-                if ((specification["type"] == "puppet") || (specification["type"] == "puppet-class-parameter"))
+
+                if (specification["type"] == "puppet") || (specification["type"] == "puppet-class-parameter")
                   contain = false
-                  if (info.key?("checks"))
-                    if (info["checks"].key?(check))
-                      if (info["checks"][check] == true)
+
+                  if info.key?("checks")
+                    if info["checks"].key?(check)
+                      if info["checks"][check] == true
                         contain = true
                       else
                         contain = false
@@ -354,22 +390,25 @@ def compiler_class()
                       end
                     end
                   end
-                  if (continue == true)
 
-                    if (specification.key?("controls"))
+                  if continue
+                    if specification.key?("controls")
+
                       specification["controls"].each do |control, subsection|
-                        if (info.key?("controls"))
-                          if (info["controls"].include?(control))
-                            if (info["controls"][control] == true)
+                        if info.key?("controls")
+                          if info["controls"].include?(control)
+                            if info["controls"][control] == true
                               contain = true
                             else
                               contain = false
                             end
                           end
                         end
+
                       end
                     end
-                    if (specification.key?("ces"))
+                    if specification.key?("ces")
+
                       specification["ces"].each do |ce|
                         if (info.key?("ces"))
                           if (info["ces"].key?(ce))
@@ -381,14 +420,15 @@ def compiler_class()
                             end
                           end
                         end
-                        if (@ce_list.key?(ce))
-                          if (@ce_list[ce].key?("controls"))
-                            controls = @ce_list[ce]["controls"]
+
+                        if @configuration_element_list.key?(ce)
+                          if @configuration_element_list[ce].key?("controls")
+                            controls = @configuration_element_list[ce]["controls"]
                             controls.each do |control, subsection|
 
-                              if (continue == true)
-                                if (info.key?("controls"))
-                                  if (info["controls"].include?(control))
+                              if continue == true
+                                if info.key?("controls")
+                                  if info["controls"].include?(control)
                                     contain = true
                                   end
                                 end
@@ -399,18 +439,21 @@ def compiler_class()
                       end
                     end
                   end
-                  if (contain == true)
-                    if (specification.key?("settings"))
-                      if (specification["settings"].key?("parameter"))
+                  if contain == true
+                    if specification.key?("settings")
+                      if specification["settings"].key?("parameter")
+
                         parameter = specification["settings"]["parameter"]
-                        if (retval.key?(parameter))
+
+                        if retval.key?(parameter)
                           #
                           # Merge
                           # XXX ToDo: Need merge settings support
                           current = retval[parameter]
+
                           specification["settings"].each do |key, value|
                             unless key == "parameter"
-                              case (current[key].class.to_s)
+                              case current[key].class.to_s
                                 when "Array"
                                   current[key].merge!(value)
                                 when "Hash"
@@ -474,48 +517,52 @@ def compiler_class()
     end
 
     # NOTE To ensure backwards compatability, we need to take steps to ensure that
-    # the v1 and v2 compilers both work without stepping on each-others' toes. 
+    # the v1 and v2 compilers both work without stepping on each-others' toes.
     def list_puppet_params(profile_list)
       v1_table = {}
       v2_table = {}
+
       # Set the keys in reverse order. This means that [ 'disa', 'nist'] would prioritize
       # disa values over nist. Only bother to store the highest priority value
       profile_list.reverse.each do |profile_map|
-        # If we see no version tag, we know that this profile map must be 
+        # If we see no version tag, we know that this profile map must be
         # version 1, and we run the legacy code for the v1 compiler
-        if (profile_map != /^v[0-9]+/)
+        unless profile_map =~ /^v[0-9]+/
+
           @compliance_data.each do |filename, map|
-            if (map.key?("version"))
+            # Assume version 1 if no version is specified.
+            # Due to old archaic code
+            version = SemanticPuppet::Version.parse('1.0.0')
+
+            if map.key?("version")
               version = SemanticPuppet::Version.parse(map["version"])
-              case version.major
-                when 1
-                  result = v1_parser(profile_map, map)
-                  v1_table.merge!(result)
-              end
-            else
-              # Assume version 1 if no version is specified.
-              # Due to old archaic code
+            end
+
+            if version.major == 1
               result = v1_parser(profile_map, map)
               v1_table.merge!(result)
             end
           end
+
           # v2 application
           begin
-            v2_table = v2.list_puppet_params(profile_list);
+            v2_table = v2.list_puppet_params(profile_list)
           rescue Exception => ex
             raise ex
           end
         end
       end
+
       table = v1_table.merge!(v2_table)
+
       control_list.new(table)
     end
 
     def v1_parser(profile, hashmap)
       table = {}
-      if (hashmap.key?(profile))
+      if hashmap.key?(profile)
         hashmap[profile].each do |key, entry|
-          if (entry.key?("value"))
+          if entry.key?("value")
             table[key] = entry
           end
         end

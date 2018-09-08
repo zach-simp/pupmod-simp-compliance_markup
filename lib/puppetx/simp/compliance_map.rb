@@ -472,5 +472,3 @@ end
 def environment
   @context.environment.name.to_s
 end
-
-# vim: set expandtab ts=2 sw=2:

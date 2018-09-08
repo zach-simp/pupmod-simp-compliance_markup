@@ -31,5 +31,3 @@ Puppet::Functions.create_function(:'compliance_markup::loaded_maps') do
     false
   end
 end
-
-# vim: set expandtab ts=2 sw=2:
