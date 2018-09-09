@@ -4,6 +4,7 @@
 # compliance maps
 
 require 'yaml'
+require 'json'
 require 'optparse'
 require 'ostruct'
 require 'fileutils'
@@ -12,7 +13,7 @@ require 'fileutils'
 
 def parse_options
   options = OpenStruct.new
-  options.dst_version = '1.0.0'
+  options.dst_version = '2.0.0'
 
   _opts = OptionParser.new do |opts|
     opts.banner = "Usage: #{$0} [options]"
@@ -103,8 +104,12 @@ def parse_options
   _infile = options.input
   if File.exist?(options.input)
     begin
-      options.input = YAML.load_file(_infile)
-    rescue Psych::SyntaxError
+      if _infile =~ /\.yaml$/
+        options.input = YAML.load_file(_infile)
+      else
+        options.input = JSON.load(File.read(_infile))
+      end
+    rescue Psych::SyntaxError, JSON::JSONError
       $stderr.puts("Error: Could not parse input file '#{_infile}'")
     end
   else
@@ -118,8 +123,8 @@ def parse_options
 
     unless options.src_version
       # 1.0.0
-      unless options.input['compliance_map'].nil?
-        options.src_version = options.input['compliance_map']['version']
+      unless options.input['compliance_markup::compliance_map'].nil?
+        options.src_version = options.input['compliance_markup::compliance_map']['version']
       end
 
       unless options.src_version
