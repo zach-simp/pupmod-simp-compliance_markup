@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+# This script allows users to translate between different versions of the
+# compliance maps
+
 require 'yaml'
 require 'optparse'
 require 'ostruct'
@@ -186,6 +189,16 @@ class HieraXlat
     end
 
     return output_hash
+  end
+
+  def xlat_1_0_0_to_2_0_0(input)
+    output_hash = {
+      'version' => '2.0.0',
+      'checks' => {}
+    }
+
+    require 'pry'
+    binding.pry
   end
 
   def process(input)
