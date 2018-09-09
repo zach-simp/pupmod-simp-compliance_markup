@@ -14,6 +14,7 @@ require 'fileutils'
 def parse_options
   options = OpenStruct.new
   options.dst_version = '2.0.0'
+  options.output_format = 'yaml'
 
   _opts = OptionParser.new do |opts|
     opts.banner = "Usage: #{$0} [options]"
@@ -66,6 +67,20 @@ def parse_options
 
       unless options.dst_version =~ /\d+\.\d+\.\d+/
         $stderr.puts('Error: src_version must be of the form X.Y.Z')
+        exit 1
+      end
+    end
+
+    opts.on(
+      '-f FORMAT',
+      '--output_format FORMAT',
+      'The output format. May be one of "json" or "yaml"',
+      '  Default: yaml'
+    ) do |arg|
+      options.output_format = arg.strip
+
+      unless ['yaml','json'].include?(options.output_format)
+        $stderr.puts('Error: The output format must be one of "yaml" or "json"')
         exit 1
       end
     end
@@ -254,11 +269,20 @@ class HieraXlat
       exit(1)
     end
 
+    to_ret = {}
     if options.target_module
-      return self.send(xlat_name.to_sym, options.input, options.target_module).to_yaml
+      to_ret = self.send(xlat_name.to_sym, options.input, options.target_module)
     else
-      return self.send(xlat_name.to_sym, options.input).to_yaml
+      to_ret = self.send(xlat_name.to_sym, options.input).to_yaml
     end
+
+    if options.output_format == 'yaml'
+      to_ret = to_ret.to_yaml
+    else
+      to_ret = JSON.pretty_generate(to_ret)
+    end
+
+    return to_ret
   end
 end
 
