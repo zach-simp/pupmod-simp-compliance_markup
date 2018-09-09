@@ -71,6 +71,14 @@ def parse_options
     end
 
     opts.on(
+      '-m MODULE',
+      '--module MODULE',
+      'For 2.0 migrations, isolate the target module to output. If left out, all will be output.'
+    ) do |arg|
+      options.target_module = arg.strip
+    end
+
+    opts.on(
       '-h',
       '--help',
       'Help Message'
@@ -196,17 +204,48 @@ class HieraXlat
     return output_hash
   end
 
-  def xlat_1_0_0_to_2_0_0(input)
+  def xlat_1_0_0_to_2_0_0(input, target_module=nil)
     output_hash = {
       'version' => '2.0.0',
       'checks' => {}
     }
 
-    require 'pry'
-    binding.pry
+    check_header = 'puppet.forge.simp'
+
+    maps = input['compliance_markup::compliance_map']
+
+    policies = maps.keys
+    policies.delete('version')
+
+    policies.each do |policy|
+      params = maps[policy].keys.sort
+
+      params.each do |param|
+        if target_module
+          next unless param.split('::').first == target_module
+        end
+
+        unique_name = "#{check_header}.#{param.gsub('::','.')}"
+
+        output_hash['checks'][unique_name] ||= {
+          'controls' => {},
+          'type'     => 'puppet-class-parameter',
+          'settings' => {
+            'parameter' => param,
+            'value'     => maps[policy][param]['value']
+          }
+        }
+
+        new_controls = Hash[maps[policy][param]['identifiers'].map{|x| x = ["#{policy}:#{x}", true]}]
+
+        output_hash['checks'][unique_name]['controls'].merge!(new_controls)
+      end
+    end
+
+    return output_hash
   end
 
-  def process(input)
+  def process(options)
     xlat_name = "xlat_#{@src_version.gsub('.','_')}_to_#{@dst_version.gsub('.','_')}"
 
     unless self.respond_to?(xlat_name)
@@ -215,13 +254,17 @@ class HieraXlat
       exit(1)
     end
 
-    return self.send(xlat_name.to_sym, input).to_yaml
+    if options.target_module
+      return self.send(xlat_name.to_sym, options.input, options.target_module).to_yaml
+    else
+      return self.send(xlat_name.to_sym, options.input).to_yaml
+    end
   end
 end
 
 options = parse_options
 
-output = HieraXlat.new(options.src_version, options.dst_version).process(options.input)
+output = HieraXlat.new(options.src_version, options.dst_version).process(options)
 
 backup_file = File.join(File.dirname(options.output), "#{File.basename(options.output,'.yaml')}.#{@uid}.yaml")
 
