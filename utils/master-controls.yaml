@@ -1,0 +1,1378 @@
+---
+version: 2.0.0
+controls:
+  AC-1:
+    family: AC
+    title: Access Control Policy And Procedures
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  AC-2:
+    family: AC
+    title: Account Management
+    description: ''
+    notes: 'Yes'
+  AC-3:
+    family: AC
+    title: Access Enforcement
+    description: ''
+    notes: 'Yes'
+  AC-4:
+    family: AC
+    title: Information Flow Enforcement
+    description: ''
+    notes: 'Yes'
+  AC-5:
+    family: AC
+    title: Separation Of Duties
+    description: ''
+    notes: Implementation specific.  SIMP can technically meet the requirement.
+  AC-6:
+    family: AC
+    title: Least Privilege
+    description: ''
+    notes: 'Yes'
+  AC-7:
+    family: AC
+    title: Unsuccessful Login Attempts
+    description: ''
+    notes: 'Yes'
+  AC-8:
+    family: AC
+    title: System Use Notification
+    description: ''
+    notes: 'Yes'
+  AC-9:
+    family: AC
+    title: Previous Logon Notification
+    description: ''
+    notes: 'Yes'
+  AC-10:
+    family: AC
+    title: Concurrent Session Control
+    description: ''
+    notes: 'Yes'
+  AC-11:
+    family: AC
+    title: Session Lock
+    description: ''
+    notes: 'Yes'
+  AC-12:
+    family: AC
+    title: Session Termination
+    description: ''
+    notes: 'Yes'
+  AC-13:
+    family: AC
+    title: Supervision And Review - Access Control
+    description: ''
+    notes: N/A
+  AC-14:
+    family: AC
+    title: Permitted Actions Without Identification Or Authentication
+    description: ''
+    notes: 'Yes'
+  AC-15:
+    family: AC
+    title: Automated Marking
+    description: ''
+    notes: N/A
+  AC-16:
+    family: AC
+    title: Automated Labeling
+    description: ''
+    notes: 'NO'
+  AC-17:
+    family: AC
+    title: Remote Access
+    description: ''
+    notes: 'Yes'
+  AC-18:
+    family: AC
+    title: Wireless Access Restrictions
+    description: ''
+    notes: N/A
+  AC-19:
+    family: AC
+    title: Access Control For Portable And Mobile Devices
+    description: ''
+    notes: N/A
+  AC-20:
+    family: AC
+    title: Use Of External Information Systems
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  AT-1:
+    family: AT
+    title: Security Awareness And Training Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  AT-2:
+    family: AT
+    title: Security Awareness
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  AT-3:
+    family: AT
+    title: Security Training
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  AT-4:
+    family: AT
+    title: Security Training Records
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  AT-5:
+    family: AT
+    title: Contacts With Security Groups And Associations
+    description: ''
+    notes: N/A
+  AU-1:
+    family: AU
+    title: Audit And Accountability Policy And Procedures
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  AU-2:
+    family: AU
+    title: Auditable Events
+    description: ''
+    notes: 'Yes'
+  AU-3:
+    family: AU
+    title: Content Of Audit Records
+    description: ''
+    notes: 'Yes'
+  AU-4:
+    family: AU
+    title: Audit Storage Capacity
+    description: ''
+    notes: 'Yes'
+  AU-5:
+    family: AU
+    title: Response To Audit Processing Failures
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  AU-6:
+    family: AU
+    title: Audit Monitoring, Analysis, And Reporting
+    description: ''
+    notes: 'Yes'
+  AU-7:
+    family: AU
+    title: Audit Reduction And Report Generation
+    description: ''
+    notes: 'NO'
+  AU-8:
+    family: AU
+    title: Time Stamps
+    description: ''
+    notes: 'Yes'
+  AU-9:
+    family: AU
+    title: Protection Of Audit Information
+    description: ''
+    notes: 'Yes'
+  AU-10:
+    family: AU
+    title: Non-Repudiation
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  AU-11:
+    family: AU
+    title: Audit Record Retention
+    description: ''
+    notes: 'NO'
+  AU-12:
+    family: AU
+    title: AUDIT GENERATION
+    description: ''
+    notes: 'Yes'
+  AU-13:
+    family: AU
+    title: MONITORING FOR INFORMATION DISCLOSURE
+    description: ''
+    notes: Implementation specific.  SIMP can technically meet the requirement.
+  AU-14:
+    family: AU
+    title: SESSION AUDIT
+    description: ''
+    notes: 'Yes'
+  CA-1:
+    family: CA
+    title: Certification, Accreditation, And Security Assessment Policies And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CA-2:
+    family: CA
+    title: Security Assessments
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CA-3:
+    family: CA
+    title: Information System Connections
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CA-4:
+    family: CA
+    title: Security Certification
+    description: ''
+    notes: N/A
+  CA-5:
+    family: CA
+    title: Plan Of Action And Milestones
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CA-6:
+    family: CA
+    title: Security Accreditation
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CA-7:
+    family: CA
+    title: Continuous Monitoring
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CM-1:
+    family: CM
+    title: Configuration Management Policy And Procedures
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  CM-2:
+    family: CM
+    title: Baseline Configuration
+    description: ''
+    notes: 'Yes'
+  CM-3:
+    family: CM
+    title: Configuration Change Control
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  CM-4:
+    family: CM
+    title: Monitoring Configuration Changes
+    description: ''
+    notes: 'NO'
+  CM-5:
+    family: CM
+    title: Access Restrictions For Change
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  CM-6:
+    family: CM
+    title: Configuration Settings
+    description: ''
+    notes: Where as this control speaks more to the overall process of managing and
+      documenting configuration settings, SIMP can also be viewed as a automated configuration
+      management capability.  The Puppet Master manages the configurations of all
+      the puppet clients identified by a puppet manifest.  All changes made outside
+      of a manifest will be reverted back to it's original state by the puppet master
+      during the specified puppet run.
+  CM-7:
+    family: CM
+    title: Least Functionality
+    description: ''
+    notes: 'Yes'
+  CM-8:
+    family: CM
+    title: Information System Component Inventory
+    description: ''
+    notes: 'NO'
+  CP-1:
+    family: CP
+    title: Contingency Planning Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CP-2:
+    family: CP
+    title: Contingency Plan
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CP-3:
+    family: CP
+    title: Contingency Training
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CP-4:
+    family: CP
+    title: Contingency Plan Testing And Exercises
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CP-5:
+    family: CP
+    title: Contingency Plan Update
+    description: ''
+    notes: N/A
+  CP-6:
+    family: CP
+    title: Alternate Storage Site
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CP-7:
+    family: CP
+    title: Alternate Processing Site
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CP-8:
+    family: CP
+    title: Telecommunications Services
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CP-9:
+    family: CP
+    title: Information System Backup
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  CP-10:
+    family: CP
+    title: Information System Recovery And Reconstitution
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IA-1:
+    family: IA
+    title: Identification And Authentication Policy And Procedures
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  IA-2:
+    family: IA
+    title: Identification And Authentication (Organizational Users)
+    description: ''
+    notes: 'Yes'
+  IA-3:
+    family: IA
+    title: Device Identification And Authentication
+    description: ''
+    notes: 'Yes'
+  IA-4:
+    family: IA
+    title: Identifier Management
+    description: ''
+    notes: 'Yes'
+  IA-5:
+    family: IA
+    title: Authenticator Management
+    description: ''
+    notes: 'Yes'
+  IA-6:
+    family: IA
+    title: Authenticator Feedback
+    description: ''
+    notes: 'Yes'
+  IA-7:
+    family: IA
+    title: Cryptographic Module Authentication
+    description: ''
+    notes: 'Yes'
+  IA-8:
+    family: IA
+    title: Identification And Authentication (Non-Organizational Users)
+    description: ''
+    notes: 'Yes'
+  IA-9:
+    family: IA
+    title: Service Identification and Authentication
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  IA-10:
+    family: IA
+    title: Adaptive Identification and Authentication
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  IA-11:
+    family: IA
+    title: Re-Authentication
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  IR-1:
+    family: IR
+    title: Incident Response Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-2:
+    family: IR
+    title: Incident Response Training
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-3:
+    family: IR
+    title: Incident Response Testing And Exercises
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-4:
+    family: IR
+    title: Incident Handling
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-5:
+    family: IR
+    title: Incident Monitoring
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-6:
+    family: IR
+    title: Incident Reporting
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-7:
+    family: IR
+    title: Incident Response Assistance
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-8:
+    family: IR
+    title: Incident Response Plan
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-9:
+    family: IR
+    title: Information Spillage Response
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  IR-10:
+    family: IR
+    title: Integrated Information Security Analysis Team
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MA-1:
+    family: MA
+    title: System Maintenance Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MA-2:
+    family: MA
+    title: Controlled Maintenance
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MA-3:
+    family: MA
+    title: Maintenance Tools
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MA-4:
+    family: MA
+    title: Remote Maintenance
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MA-5:
+    family: MA
+    title: Maintenance Personnel
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MA-6:
+    family: MA
+    title: Timely Maintenance
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MP-1:
+    family: MP
+    title: Media Protection Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MP-2:
+    family: MP
+    title: Media Access
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MP-3:
+    family: MP
+    title: Media Labeling
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MP-4:
+    family: MP
+    title: Media Storage
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MP-5:
+    family: MP
+    title: Media Transport
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MP-6:
+    family: MP
+    title: Media Sanitization And Disposal
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MP-7:
+    family: MP
+    title: Media Use
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  MP-8:
+    family: MP
+    title: Media Downgrading
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-1:
+    family: PE
+    title: Physical And Environmental Protection Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-2:
+    family: PE
+    title: Physical Access Authorizations
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-3:
+    family: PE
+    title: Physical Access Control
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-4:
+    family: PE
+    title: Access Control For Transmission Medium
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-5:
+    family: PE
+    title: Access Control For Display Medium
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-6:
+    family: PE
+    title: Monitoring Physical Access
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-7:
+    family: PE
+    title: Visitor Control
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-8:
+    family: PE
+    title: Access Records
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-9:
+    family: PE
+    title: Power Equipment And Power Cabling
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-10:
+    family: PE
+    title: Emergency Shutoff
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-11:
+    family: PE
+    title: Emergency Power
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-12:
+    family: PE
+    title: Emergency Lighting
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-13:
+    family: PE
+    title: Fire Protection
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-14:
+    family: PE
+    title: Temperature And Humidity Controls
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-15:
+    family: PE
+    title: Water Damage Protection
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-16:
+    family: PE
+    title: Delivery And Removal
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-17:
+    family: PE
+    title: Alternate Work Site
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-18:
+    family: PE
+    title: Location Of Information System Components
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PE-19:
+    family: PE
+    title: Information Leakage
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-1:
+    family: PL
+    title: Security Planning Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-2:
+    family: PL
+    title: System Security Plan
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-3:
+    family: PL
+    title: System Security Plan Update
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-4:
+    family: PL
+    title: Rules Of Behavior
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-5:
+    family: PL
+    title: Privacy Impact Assessment
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-6:
+    family: PL
+    title: Security-Related Activity Planning
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-7:
+    family: PL
+    title: Security Concept of Operations
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-8:
+    family: PL
+    title: Information Security Architecture
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PL-9:
+    family: PL
+    title: Central Management
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-1:
+    family: PM
+    title: Information Security Program Plan
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-2:
+    family: PM
+    title: Senior Information Security Officer
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-3:
+    family: PM
+    title: Information Security Resources
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-4:
+    family: PM
+    title: Plan Of Action And Milestones Process
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-5:
+    family: PM
+    title: Information System Inventory
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-6:
+    family: PM
+    title: Information Security Measures of Performance
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-7:
+    family: PM
+    title: Enterprise Architecture
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-8:
+    family: PM
+    title: Critical Infrastructure Plan
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-9:
+    family: PM
+    title: Risk Management Strategy
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-10:
+    family: PM
+    title: Security Authorization Process
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-11:
+    family: PM
+    title: Mission/Business Process Definition
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-12:
+    family: PM
+    title: Insider Threat Program
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-13:
+    family: PM
+    title: Information Security Workforce
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PM-14:
+    family: PM
+    title: Testing, Training, and Monitoring
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PS-1:
+    family: PS
+    title: Personnel Security Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PS-2:
+    family: PS
+    title: Position Categorization
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PS-3:
+    family: PS
+    title: Personnel Screening
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PS-4:
+    family: PS
+    title: Personnel Termination
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PS-5:
+    family: PS
+    title: Personnel Transfer
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PS-6:
+    family: PS
+    title: Access Agreements
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PS-7:
+    family: PS
+    title: Third-Party Personnel Security
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  PS-8:
+    family: PS
+    title: Personnel Sanctions
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  RA-1:
+    family: RA
+    title: Risk Assessment Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  RA-2:
+    family: RA
+    title: Security Categorization
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  RA-3:
+    family: RA
+    title: Risk Assessment
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  RA-4:
+    family: RA
+    title: Risk Assessment Update
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  RA-5:
+    family: RA
+    title: Vulnerability Scanning
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  RA-6:
+    family: RA
+    title: Technical Surveillance Countermeasures Survey
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-1:
+    family: SA
+    title: System And Services Acquisition Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-2:
+    family: SA
+    title: Allocation Of Resources
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-3:
+    family: SA
+    title: Life Cycle Support
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-4:
+    family: SA
+    title: Acquisitions
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-5:
+    family: SA
+    title: Information System Documentation
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-6:
+    family: SA
+    title: Software Usage Restrictions
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-7:
+    family: SA
+    title: User Installed Software
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-8:
+    family: SA
+    title: Security Engineering Principles
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-9:
+    family: SA
+    title: External Information System Services
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-10:
+    family: SA
+    title: Developer Configuration Management
+    description: ''
+    notes: 'Yes'
+  SA-11:
+    family: SA
+    title: Developer Security Testing
+    description: ''
+    notes: 'Yes'
+  SA-12:
+    family: SA
+    title: Supply Chain Protection
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-13:
+    family: SA
+    title: Trustworthiness
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-14:
+    family: SA
+    title: Criticality Analysis
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-15:
+    family: SA
+    title: Development Process, Standards, and Tools
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-16:
+    family: SA
+    title: Developer-Provided Training
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-17:
+    family: SA
+    title: Developer Security Architecture and Design
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-18:
+    family: SA
+    title: Tamper Resistance and Detection
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-19:
+    family: SA
+    title: Component Authenticity
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-20:
+    family: SA
+    title: Customized Development of Critical Components
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-21:
+    family: SA
+    title: Developer Screening
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SA-22:
+    family: SA
+    title: Unsupported System Components
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SC-1:
+    family: SC
+    title: System And Communications Protection Policy And Procedures
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-2:
+    family: SC
+    title: Application Partitioning
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-3:
+    family: SC
+    title: Security Function Isolation
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-4:
+    family: SC
+    title: Information Remnance
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-5:
+    family: SC
+    title: Denial Of Service Protection
+    description: ''
+    notes: 'NO'
+  SC-6:
+    family: SC
+    title: Resource Priority
+    description: ''
+    notes: 'NO'
+  SC-7:
+    family: SC
+    title: Boundary Protection
+    description: ''
+    notes: 'NO'
+  SC-8:
+    family: SC
+    title: Transmission Integrity
+    description: ''
+    notes: 'Yes'
+  SC-9:
+    family: SC
+    title: Transmission Confidentiality
+    description: ''
+    notes: 'Yes'
+  SC-10:
+    family: SC
+    title: Network Disconnect
+    description: ''
+    notes: 'Yes'
+  SC-11:
+    family: SC
+    title: Trusted Path
+    description: ''
+    notes: 'NO'
+  SC-12:
+    family: SC
+    title: Cryptographic Key Establishment And Management
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-13:
+    family: SC
+    title: Use Of Cryptography
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-14:
+    family: SC
+    title: Public Access Protections
+    description: ''
+    notes: 
+  SC-15:
+    family: SC
+    title: Collaborative Computing
+    description: ''
+    notes: 'NO'
+  SC-16:
+    family: SC
+    title: Transmission Of Security Parameters
+    description: ''
+    notes: 'NO'
+  SC-17:
+    family: SC
+    title: Public Key Infrastructure Certificates
+    description: ''
+    notes: 'NO'
+  SC-18:
+    family: SC
+    title: Mobile Code
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-19:
+    family: SC
+    title: Voice Over Internet Protocol
+    description: ''
+    notes: 'NO'
+  SC-20:
+    family: SC
+    title: Secure Name / Address Resolution Service (Authoritative Source)
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-21:
+    family: SC
+    title: Secure Name / Address Resolution Service (Recursive Or Caching Resolver)
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-22:
+    family: SC
+    title: Architecture And Provisioning For Name / Address Resolution Service
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-23:
+    family: SC
+    title: Session Authenticity
+    description: ''
+    notes: 'Yes'
+  SC-24:
+    family: SC
+    title: Fail in Known State
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-25:
+    family: SC
+    title: Thin Nodes
+    description: ''
+    notes: 'NO'
+  SC-26:
+    family: SC
+    title: Honeypots
+    description: ''
+    notes: 'NO'
+  SC-27:
+    family: SC
+    title: Platform-independent Applications
+    description: ''
+    notes: 'NO'
+  SC-28:
+    family: SC
+    title: Protection of Information at Rest
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SC-29:
+    family: SC
+    title: Heterogeneity
+    description: ''
+    notes: 'NO'
+  SC-30:
+    family: SC
+    title: Concealment and Misdirection
+    description: ''
+    notes: 'NO'
+  SC-31:
+    family: SC
+    title: Covert Channel Analysis
+    description: ''
+    notes: 'NO'
+  SC-32:
+    family: SC
+    title: Information System Partitioning
+    description: ''
+    notes: 'Yes'
+  SC-33:
+    family: SC
+    title: Transmission Preparation Integrity
+    description: ''
+    notes: 'NO'
+  SC-34:
+    family: SC
+    title: Non-Modifiable Executable Programs
+    description: ''
+    notes: 'NO'
+  SC-35:
+    family: SC
+    title: Honeyclients
+    description: ''
+    notes: 'NO'
+  SC-36:
+    family: SC
+    title: Distributed Processing and Storage
+    description: ''
+    notes: 'NO'
+  SC-37:
+    family: SC
+    title: Out-of-Band Channels
+    description: ''
+    notes: 'NO'
+  SC-38:
+    family: SC
+    title: Operations Security
+    description: ''
+    notes: 'NO'
+  SC-39:
+    family: SC
+    title: Process Isolation
+    description: ''
+    notes: 'NO'
+  SC-40:
+    family: SC
+    title: Wireless Link Protection
+    description: ''
+    notes: 'NO'
+  SC-41:
+    family: SC
+    title: Port and I/O Device Access
+    description: ''
+    notes: 'NO'
+  SC-42:
+    family: SC
+    title: Sensor Capability and Data
+    description: ''
+    notes: 'NO'
+  SC-43:
+    family: SC
+    title: Usage Restrictions
+    description: ''
+    notes: 'NO'
+  SC-44:
+    family: SC
+    title: Detonation Chambers
+    description: ''
+    notes: 'NO'
+  SI-1:
+    family: SI
+    title: System And Information Integrity Policy And Procedures
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SI-2:
+    family: SI
+    title: Flaw Remediation
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SI-3:
+    family: SI
+    title: Malicious Code Protection
+    description: ''
+    notes: 'Yes'
+  SI-4:
+    family: SI
+    title: Information System Monitoring Tools And Techniques
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.  Externally, SIMP doesn't have the capability to
+      monitor the IS, however, Internally SIMP provides the capabilities for monitoring
+      to occur i.e. audit logs.
+  SI-5:
+    family: SI
+    title: Security Alerts And Advisories
+    description: ''
+    notes: 'NO'
+  SI-6:
+    family: SI
+    title: Security Functionality Verification
+    description: ''
+    notes: 'NO'
+  SI-7:
+    family: SI
+    title: Software And Information Integrity
+    description: ''
+    notes: 'Yes'
+  SI-8:
+    family: SI
+    title: Spam Protection
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SI-9:
+    family: SI
+    title: Information Input Restrictions
+    description: ''
+    notes: 'NO'
+  SI-10:
+    family: SI
+    title: Information Input Validation
+    description: ''
+    notes: 'NO'
+  SI-11:
+    family: SI
+    title: Error Handling
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SI-12:
+    family: SI
+    title: Information Output Handling And Retention
+    description: ''
+    notes: Considered a Operational Class control, this control is typically defined
+      at the organization level.
+  SI-13:
+    family: SI
+    title: Predictable Failure Prevention
+    description: ''
+    notes: 'NO'
+  SI-14:
+    family: SI
+    title: Non-Persistence
+    description: ''
+    notes: 'NO'
+  SI-15:
+    family: SI
+    title: Information Output Filtering
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SI-16:
+    family: SI
+    title: Memory Protection
+    description: ''
+    notes: Implementation specific. Though listed in the Technical class, policy and
+      procedural controls are established at the organizational level which drives
+      technical implementation. SIMP can technically implement this control.
+  SI-17:
+    family: SI
+    title: Fail-Safe Procedures
+    description: ''
+    notes: 'NO'

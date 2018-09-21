@@ -243,7 +243,6 @@ def compliance_map(args, context)
   profile_compiler.load do |key, default|
     @context.call_function('lookup', [key, {"default_value" => default}])
   end
-
   main_config = process_options(args)
   report_types = main_config[:report_types]
 
@@ -442,6 +441,9 @@ def custom_call_file_info
 
   return file_info
 end
+
+# These methods are part of the callback api for compliance engine.
+
 def cache(key, value)
   if @hash == nil
     @hash = {}
@@ -460,5 +462,13 @@ def cache_has_key(key)
   end
   @hash.key?(key)
 end
+def debug(message)
+  return
+end
+def codebase
+  "compliance_map"
+end
 
-# vim: set expandtab ts=2 sw=2:
+def environment
+  @context.environment.name.to_s
+end

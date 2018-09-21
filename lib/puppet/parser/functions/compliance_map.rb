@@ -207,5 +207,3 @@ module Puppet::Parser::Functions
     compliance_report_generator.compliance_map(args, self)
   end
 end
-
-# vim: set expandtab ts=2 sw=2:

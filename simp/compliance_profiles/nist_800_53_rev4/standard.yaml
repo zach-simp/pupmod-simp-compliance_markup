@@ -1,0 +1,17 @@
+---
+version: 2.0.0
+standards:
+  nist_800_53:rev4:
+    options:
+        confidentiality:
+          - HIGH
+          - MODERATE
+          - LOW
+        integrity:
+          - HIGH
+          - MODERATE
+          - LOW
+        availability:
+          - HIGH
+          - MODERATE
+          - LOW

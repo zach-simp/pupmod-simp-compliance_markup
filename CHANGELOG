@@ -1,3 +1,20 @@
+* Thu Sep 20 2018 Dylan Cochran <dylan.cochran@onyxpoint.com> - 2.4.0-0
+- Open-Source SCE version 2.0
+  - Add bugfix for environments that are just Strings vs Environment objects.
+  - Add compliance_markup::loaded_maps() function to return all of the loaded
+    compliance data from the puppetserver for debugging
+  - Add compliance_markup::telemetry() function to return filenames used to
+    load compliance data
+  - Add compliance_markup::debug::dump hiera parameter that dumps the cached
+    result hash for hiera debugging.
+  - Remove pupmod::ca_crl_pull_interval from nist_800_53_rev4.json's since
+    the parameter is deprecated.
+  - refactor loader to look in:
+    - "/SIMP/compliance_profiles"
+    - "/simp/compliance_profiles"
+    and for backwards compatbility:
+    - "/lib/puppetx/compliance"
+
 * Fri Aug 24 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 2.3.4-0
 - Change 'sudosh' to 'tlog' to support the switch to supported session logging
   software

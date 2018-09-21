@@ -905,15 +905,6 @@
         ],
         "value": true
       },
-      "pupmod::ca_crl_pull_interval": {
-        "identifiers": [
-          "SC-8",
-          "SC-8(1)",
-          "SC-8(2)",
-          "SC-23"
-        ],
-        "value": 2
-      },
       "pupmod::confdir": {
         "identifiers": [
           "CM-6"

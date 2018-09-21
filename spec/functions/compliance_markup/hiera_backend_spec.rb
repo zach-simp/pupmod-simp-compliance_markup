@@ -69,5 +69,3 @@ if (puppetver > requiredver)
     end
   end
 end
-
-# vim: set expandtab ts=2 sw=2:
