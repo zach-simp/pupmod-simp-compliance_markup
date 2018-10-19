@@ -31,5 +31,5 @@ end
 group :system_tests do
   gem 'beaker'
   gem 'beaker-rspec'
-  gem 'simp-beaker-helpers', git: 'git@github.com:zach-simp/rubygem-simp-beaker-helpers.git', branch: 'TEST'
+  gem 'simp-beaker-helpers', git: 'https://github.com/zach-simp/rubygem-simp-beaker-helpers.git', branch: 'TEST'
 end
